@@ -24,12 +24,14 @@ $Group "game"
 	"server"
 	"tier1"
 	"vgui_controls"
+	
+	"game_shader_generic_std"
 }
 
 $Group "shaders"
 {
-	"game_shader_generic_example"
-	//"game_shader_generic_std"
+	//"game_shader_generic_example"
+	"game_shader_generic_std"
 }
 
 $Group "everything"

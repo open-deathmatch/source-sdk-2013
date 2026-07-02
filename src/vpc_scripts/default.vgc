@@ -21,6 +21,8 @@ $Games
 	"PORTAL"
 	"SDK"
 	"TF"
+	
+	"DEATHMATCH"
 }
 
 $Include "vpc_scripts\projects.vgc"
