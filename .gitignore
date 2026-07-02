@@ -505,3 +505,5 @@ FodyWeavers.xsd
 
 # Game files are in separate repo...
 game/deathmatch
+game/deathmatch_win64.exe
+game/deathmatch_linux64
