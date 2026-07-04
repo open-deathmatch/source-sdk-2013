@@ -81,7 +81,10 @@ public:
 	virtual void UpdateOnRemove( void );
 	virtual void DeathSound( const CTakeDamageInfo &info );
 	virtual CBaseEntity* EntSelectSpawnPoint( void );
-		
+#ifdef DEATHMATCH
+	void UpdateViewmodelArmModel( void );
+#endif
+
 	int FlashlightIsOn( void );
 	void FlashlightTurnOn( void );
 	void FlashlightTurnOff( void );

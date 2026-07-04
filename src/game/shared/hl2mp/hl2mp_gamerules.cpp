@@ -134,6 +134,9 @@ static const char *s_PreserveEnts[] =
 	"predicted_viewmodel",
 	"worldspawn",
 	"point_devshot_camera",
+#ifdef DEATHMATCH
+	"hand_viewmodel",
+#endif
 	"", // END Marker
 };
 

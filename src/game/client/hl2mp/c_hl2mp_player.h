@@ -196,7 +196,11 @@ private:
 	void Interp_Copy( C_BaseAnimatingOverlay *pDestinationEntity );
 	void CreateHL2MPRagdoll( void );
 
+#ifndef DEATHMATCH
 private:
+#else
+public:
+#endif
 
 	EHANDLE	m_hPlayer;
 	CNetworkVector( m_vecRagdollVelocity );

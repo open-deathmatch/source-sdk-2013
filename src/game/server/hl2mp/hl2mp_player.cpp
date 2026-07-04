@@ -230,6 +230,21 @@ void CHL2MP_Player::UpdateOnRemove( void )
 	BaseClass::UpdateOnRemove();
 }
 
+#ifdef DEATHMATCH
+void CHL2MP_Player::UpdateViewmodelArmModel( void )
+{
+	CBaseViewModel *pArmsVM = GetViewModel( 1 );
+
+	if ( !pArmsVM )
+		return;
+
+	if ( m_iPlayerSoundType == ( int ) PLAYER_SOUNDS_COMBINESOLDIER || m_iPlayerSoundType == ( int ) PLAYER_SOUNDS_METROPOLICE )
+		pArmsVM->SetModel( "models/weapons/c_arms_combine.mdl" );
+	else
+		pArmsVM->SetModel( "models/weapons/c_arms_refugee.mdl" );
+}
+#endif
+
 void CHL2MP_Player::Precache( void )
 {
 	BaseClass::Precache();
@@ -248,6 +263,11 @@ void CHL2MP_Player::Precache( void )
 
 	for ( i = 0; i < nHeads; ++i )
 	   	 PrecacheModel( g_ppszRandomCombineModels[i] );
+
+#ifdef DEATHMATCH
+	PrecacheModel( "models/weapons/c_arms_refugee.mdl" );
+	PrecacheModel( "models/weapons/c_arms_combine.mdl" );
+#endif
 
 	PrecacheScriptSound( "NPC_MetroPolice.Die" );
 	PrecacheScriptSound( "NPC_CombineS.Die" );
@@ -431,6 +451,10 @@ void CHL2MP_Player::Spawn(void)
 
 	m_bReady = false;
 
+#ifdef DEATHMATCH
+	UpdateViewmodelArmModel();
+#endif
+
 	//Tony; do the spawn animevent
 	DoAnimationEvent( PLAYERANIMEVENT_SPAWN );
 }
@@ -528,6 +552,9 @@ void CHL2MP_Player::SetPlayerTeamModel( void )
 	
 	SetModel( szModelName );
 	SetupPlayerSoundsByModel( szModelName );
+#ifdef DEATHMATCH
+	UpdateViewmodelArmModel();
+#endif
 
 	m_flNextModelChangeTime = gpGlobals->curtime + MODEL_CHANGE_INTERVAL;
 }
@@ -636,6 +663,9 @@ void CHL2MP_Player::SetPlayerModel( void )
 
 	SetModel( szModelName );
 	SetupPlayerSoundsByModel( szModelName );
+#ifdef DEATHMATCH
+	UpdateViewmodelArmModel();
+#endif
 
 	m_flNextModelChangeTime = gpGlobals->curtime + MODEL_CHANGE_INTERVAL;
 }
@@ -696,6 +726,10 @@ void CHL2MP_Player::PostThink( void )
 
 void CHL2MP_Player::PlayerDeathThink()
 {
+#ifdef DEATHMATCH
+	GetViewModel( 1 )->SetModel( "" );
+#endif
+
 	if( !IsObserver() )
 	{
 		BaseClass::PlayerDeathThink();

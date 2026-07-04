@@ -62,6 +62,11 @@ $Project "Server (Open Deathmatch)"
 		$File	"trigger_area_capture.h"
 		$File   "$SRCDIR\game\shared\teamplay_round_timer.cpp"
 		$File   "$SRCDIR\game\shared\teamplay_round_timer.h"
+		
+		$Folder "Open Deathmatch"
+		{
+			$File	"$SRCDIR\game\shared\deathmatch\handviewmodel_shared.cpp"
+		}
 
 		$Folder "NextBot"
 		{

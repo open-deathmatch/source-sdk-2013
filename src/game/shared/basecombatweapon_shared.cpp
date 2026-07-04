@@ -1343,11 +1343,17 @@ bool CBaseCombatWeapon::UsesSecondaryAmmo( void )
 void CBaseCombatWeapon::SetWeaponVisible( bool visible )
 {
 	CBaseViewModel *vm = NULL;
+#ifdef DEATHMATCH
+	CBaseViewModel *hm = NULL;
+#endif
 
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 	if ( pOwner )
 	{
 		vm = pOwner->GetViewModel( m_nViewModelIndex );
+#ifdef DEATHMATCH
+		hm = pOwner->GetViewModel( 1 );
+#endif
 	}
 
 	if ( visible )
@@ -1357,6 +1363,12 @@ void CBaseCombatWeapon::SetWeaponVisible( bool visible )
 		{
 			vm->RemoveEffects( EF_NODRAW );
 		}
+#ifdef DEATHMATCH
+		if ( hm )
+		{
+			hm->RemoveEffects( EF_NODRAW );
+		}
+#endif
 	}
 	else
 	{
@@ -1365,6 +1377,12 @@ void CBaseCombatWeapon::SetWeaponVisible( bool visible )
 		{
 			vm->AddEffects( EF_NODRAW );
 		}
+#ifdef DEATHMATCH
+		if ( hm )
+		{
+			hm->AddEffects( EF_NODRAW );
+		}
+#endif
 	}
 }
 

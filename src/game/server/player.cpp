@@ -518,6 +518,30 @@ void CBasePlayer::CreateViewModel( int index /*=0*/ )
 	}
 }
 
+#ifdef DEATHMATCH
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBasePlayer::CreateHandModel( int index, int iOtherVm )
+{
+	Assert( index >= 0 && index < MAX_VIEWMODELS && iOtherVm >= 0 && iOtherVm < MAX_VIEWMODELS );
+
+	if ( GetViewModel( index ) )
+		return;
+
+	CBaseViewModel *vm = ( CBaseViewModel * ) CreateEntityByName( "hand_viewmodel" );
+	if ( vm )
+	{
+		vm->SetAbsOrigin( GetAbsOrigin() );
+		vm->SetOwner( this );
+		vm->SetIndex( index );
+		DispatchSpawn( vm );
+		vm->FollowEntity( GetViewModel( iOtherVm ), true );
+		m_hViewModel.Set( index, vm );
+	}
+}
+#endif
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -5130,6 +5154,9 @@ void CBasePlayer::Spawn( void )
 	enginesound->SetPlayerDSP( user, 0, false );
 
 	CreateViewModel();
+#ifdef DEATHMATCH
+	CreateHandModel();
+#endif
 
 	SetCollisionGroup( COLLISION_GROUP_PLAYER );
 

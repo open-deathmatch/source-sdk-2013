@@ -34,6 +34,11 @@ $Project "Client (Open Deathmatch)"
 		$File	"$SRCDIR\game\shared\teamplay_round_timer.cpp"
 		$File	"$SRCDIR\game\shared\teamplay_round_timer.h"
 
+		$Folder "Open Deathmatch"
+		{
+			$File	"$SRCDIR\game\shared\deathmatch\handviewmodel_shared.cpp"
+		}
+
 		$Folder	"NextBot"
 		{
 			$File	"NextBot\C_NextBot.cpp"
