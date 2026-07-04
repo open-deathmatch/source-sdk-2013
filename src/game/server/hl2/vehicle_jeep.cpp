@@ -988,6 +988,9 @@ void CPropJeep::FireCannon( void )
 //-----------------------------------------------------------------------------
 void CPropJeep::FireChargedCannon( void )
 {
+#ifdef DEATHMATCH
+	CDisablePredictionFiltering disabler;
+#endif
 	bool penetrated = false;
 
 	m_bCannonCharging	= false;
