@@ -50,6 +50,15 @@ public:
 
 	void	UpdatePenaltyTime( void );
 
+#ifndef CLIENT_DLL
+	int		CapabilitiesGet( void )
+	{
+		return bits_CAP_WEAPON_RANGE_ATTACK1;
+	}
+
+	Activity	GetPrimaryAttackActivity( void );
+#endif
+
 	Activity	GetPrimaryAttackActivity( void );
 
 	virtual bool Reload( void );
@@ -84,10 +93,8 @@ public:
 	{
 		return 0.5f; 
 	}
-	
-#ifndef CLIENT_DLL
+
 	DECLARE_ACTTABLE();
-#endif
 
 private:
 	CNetworkVar( float,	m_flSoonestPrimaryAttack );
@@ -127,23 +134,38 @@ END_PREDICTION_DATA()
 LINK_ENTITY_TO_CLASS( weapon_pistol, CWeaponPistol );
 PRECACHE_WEAPON_REGISTER( weapon_pistol );
 
-#ifndef CLIENT_DLL
 acttable_t CWeaponPistol::m_acttable[] = 
 {
-	{ ACT_HL2MP_IDLE,					ACT_HL2MP_IDLE_PISTOL,					false },
-	{ ACT_HL2MP_RUN,					ACT_HL2MP_RUN_PISTOL,					false },
-	{ ACT_HL2MP_IDLE_CROUCH,			ACT_HL2MP_IDLE_CROUCH_PISTOL,			false },
-	{ ACT_HL2MP_WALK_CROUCH,			ACT_HL2MP_WALK_CROUCH_PISTOL,			false },
-	{ ACT_HL2MP_GESTURE_RANGE_ATTACK,	ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,	false },
-	{ ACT_HL2MP_GESTURE_RELOAD,			ACT_HL2MP_GESTURE_RELOAD_PISTOL,		false },
-	{ ACT_HL2MP_JUMP,					ACT_HL2MP_JUMP_PISTOL,					false },
-	{ ACT_RANGE_ATTACK1,				ACT_RANGE_ATTACK_PISTOL,				false },
+	{ ACT_MP_STAND_IDLE, ACT_HL2MP_IDLE_PISTOL, false },
+	{ ACT_MP_CROUCH_IDLE, ACT_HL2MP_IDLE_CROUCH_PISTOL, false },
+
+	{ ACT_MP_RUN, ACT_HL2MP_RUN_PISTOL, false },
+	{ ACT_MP_CROUCHWALK, ACT_HL2MP_WALK_CROUCH_PISTOL, false },
+	{ ACT_MP_ATTACK_STAND_PRIMARYFIRE, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, false },
+	{ ACT_MP_ATTACK_CROUCH_PRIMARYFIRE, ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL, false },
+	{ ACT_MP_RELOAD_STAND, ACT_HL2MP_GESTURE_RELOAD_PISTOL, false },
+	{ ACT_MP_RELOAD_CROUCH, ACT_HL2MP_GESTURE_RELOAD_PISTOL, false },
+
+	{ ACT_MP_JUMP, ACT_HL2MP_JUMP_PISTOL, false },
+
+	{ ACT_IDLE, ACT_IDLE_PISTOL, true },
+	{ ACT_IDLE_ANGRY, ACT_IDLE_ANGRY_PISTOL, true },
+	{ ACT_RANGE_ATTACK1, ACT_RANGE_ATTACK_PISTOL, true },
+	{ ACT_RELOAD, ACT_RELOAD_PISTOL, true },
+	{ ACT_WALK_AIM, ACT_WALK_AIM_PISTOL, true },
+	{ ACT_RUN_AIM, ACT_RUN_AIM_PISTOL, true },
+	{ ACT_GESTURE_RANGE_ATTACK1, ACT_GESTURE_RANGE_ATTACK_PISTOL, true },
+	{ ACT_RELOAD_LOW, ACT_RELOAD_PISTOL_LOW, false },
+	{ ACT_RANGE_ATTACK1_LOW, ACT_RANGE_ATTACK_PISTOL_LOW, false },
+	{ ACT_COVER_LOW, ACT_COVER_PISTOL_LOW, false },
+	{ ACT_RANGE_AIM_LOW, ACT_RANGE_AIM_PISTOL_LOW, false },
+	{ ACT_GESTURE_RELOAD, ACT_GESTURE_RELOAD_PISTOL, false },
+	{ ACT_WALK, ACT_WALK_PISTOL, false },
+	{ ACT_RUN, ACT_RUN_PISTOL, false },
 };
 
 
 IMPLEMENT_ACTTABLE( CWeaponPistol );
-
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
@@ -286,6 +308,26 @@ void CWeaponPistol::ItemPostFrame( void )
 		DryFire();
 	}
 }
+
+#ifndef CLIENT_DLL
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Output : int
+//-----------------------------------------------------------------------------
+Activity CWeaponPistol::GetPrimaryAttackActivity( void )
+{
+	if ( m_nNumShotsFired < 1 )
+		return ACT_VM_PRIMARYATTACK;
+
+	if ( m_nNumShotsFired < 2 )
+		return ACT_VM_RECOIL1;
+
+	if ( m_nNumShotsFired < 3 )
+		return ACT_VM_RECOIL2;
+
+	return ACT_VM_RECOIL3;
+}
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: 

@@ -80,9 +80,9 @@ public:
 	CWeapon_SLAM();
 
 #ifndef CLIENT_DLL
-	DECLARE_ACTTABLE();
 	DECLARE_DATADESC();
 #endif
+	DECLARE_ACTTABLE();
 
 private:
 	CWeapon_SLAM( const CWeapon_SLAM & );

@@ -72,13 +72,21 @@ public:
 	}
 };
 
+// In HL2MP we need to inherit from  BaseMultiplayerPlayer!
+#if defined ( HL2MP )
+#include "basemultiplayerplayer.h"
+#define BASEPLAYERCLASS CBaseMultiplayerPlayer
+#else
+#define BASEPLAYERCLASS CBasePlayer
+#endif
+
 //=============================================================================
 // >> HL2_PLAYER
 //=============================================================================
-class CHL2_Player : public CBasePlayer
+class CHL2_Player : public BASEPLAYERCLASS
 {
 public:
-	DECLARE_CLASS( CHL2_Player, CBasePlayer );
+	DECLARE_CLASS( CHL2_Player, BASEPLAYERCLASS );
 
 	CHL2_Player();
 	~CHL2_Player( void );
