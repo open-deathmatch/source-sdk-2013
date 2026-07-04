@@ -238,7 +238,11 @@ void CGrenadeSpit::Think( void )
 		return;
 	
 	// Add a doppler effect to the balls as they travel
+#ifdef DEATHMATCH
+	CBaseEntity *pPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 	CBaseEntity *pPlayer = AI_GetSinglePlayer();
+#endif
 	if ( pPlayer != NULL )
 	{
 		Vector dir;

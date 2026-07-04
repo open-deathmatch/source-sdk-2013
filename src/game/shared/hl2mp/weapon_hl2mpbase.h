@@ -13,6 +13,11 @@
 #include "hl2mp_player_shared.h"
 #include "basecombatweapon_shared.h"
 #include "hl2mp_weapon_parse.h"
+#ifdef DEATHMATCH
+#ifndef CLIENT_DLL
+#include "ai_basenpc.h"
+#endif
+#endif
 
 #if defined( CLIENT_DLL )
 	#define CWeaponHL2MPBase C_WeaponHL2MPBase

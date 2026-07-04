@@ -228,10 +228,19 @@ void CNPCSimpleTalker::RunTask( const Task_t *pTask )
 	case TASK_TALKER_CLIENT_STARE:
 	case TASK_TALKER_LOOK_AT_CLIENT:
 
+#ifdef DEATHMATCH
+		if ( pTask->iTask == TASK_TALKER_CLIENT_STARE )
+		{
+			// Get edict for one player
+			CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer( this );
+			if ( !pPlayer )
+				pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
+#else
 		if ( pTask->iTask == TASK_TALKER_CLIENT_STARE && AI_IsSinglePlayer() )
 		{
 			// Get edict for one player
 			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+#endif
 			Assert( pPlayer );
 
 			// fail out if the player looks away or moves away.

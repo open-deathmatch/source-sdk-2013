@@ -802,6 +802,9 @@ void CFuncTank::Spawn( void )
 			if ( pProp )
 			{
 				pProp->m_bUseHitboxesForRenderBox = true;
+#ifdef DEATHMATCH
+				pProp->m_bClientSideAnimation = false;
+#endif
 			}
 		}
 	}
@@ -2159,6 +2162,9 @@ void CFuncTank::DoMuzzleFlash( void )
 			CEffectData data;
 			data.m_nAttachmentIndex = m_nBarrelAttachment;
 			data.m_nEntIndex = pAnim->entindex();
+#ifdef DEATHMATCH
+			pAnim->GetAttachment( m_nBarrelAttachment, data.m_vOrigin );
+#endif
 			
 			// FIXME: Create a custom entry here!
 			DispatchEffect( "ChopperMuzzleFlash", data );
@@ -2170,6 +2176,9 @@ void CFuncTank::DoMuzzleFlash( void )
 			data.m_nAttachmentIndex = m_nBarrelAttachment;
 			data.m_flScale = 1.0f;
 			data.m_fFlags = MUZZLEFLASH_COMBINE;
+#ifdef DEATHMATCH
+			pAnim->GetAttachment( m_nBarrelAttachment, data.m_vOrigin );
+#endif
 
 			DispatchEffect( "MuzzleFlash", data );
 		}
@@ -2437,6 +2446,10 @@ LINK_ENTITY_TO_CLASS( func_tank, CFuncTankGun );
 //-----------------------------------------------------------------------------
 void CFuncTankGun::Fire( int bulletCount, const Vector &barrelEnd, const Vector &forward, CBaseEntity *pAttacker, bool bIgnoreSpread )
 {
+#ifdef DEATHMATCH
+	IPredictionSystem::SuppressHostEvents( NULL );
+#endif
+
 	int i;
 
 	FireBulletsInfo_t info;
@@ -2459,7 +2472,7 @@ void CFuncTankGun::Fire( int bulletCount, const Vector &barrelEnd, const Vector 
 	info.m_pAttacker = pAttacker;
 	info.m_pAdditionalIgnoreEnt = GetParent();
 
-#ifdef HL2_EPISODIC
+#if !defined( DEATHMATCH ) && defined( HL2_EPISODIC )
 	if ( m_iAmmoType != -1 )
 	{
 		for ( i = 0; i < bulletCount; i++ )
@@ -2963,6 +2976,9 @@ void CFuncTankAirboatGun::DoMuzzleFlash( void )
 		data.m_nEntIndex = m_hAirboatGunModel->entindex();
 		data.m_nAttachmentIndex = m_nGunBarrelAttachment;
 		data.m_flScale = 1.0f;
+#ifdef DEATHMATCH
+		m_hAirboatGunModel->GetAttachment( m_nGunBarrelAttachment, data.m_vOrigin );
+#endif
 		DispatchEffect( "AirboatMuzzleFlash", data );
 	}
 }
@@ -2973,7 +2989,7 @@ void CFuncTankAirboatGun::DoMuzzleFlash( void )
 //-----------------------------------------------------------------------------
 void CFuncTankAirboatGun::DoImpactEffect( trace_t &tr, int nDamageType )
 {
-	// The airboat spits out so much stuff that we need to do cheaper versions
+	// The airboat spits out so much crap that we need to do cheaper versions
 	// of the impact effects. Also, we need to do less of them.
 	if ( m_flLastImpactEffectTime == gpGlobals->curtime )
 		return;
@@ -4215,7 +4231,11 @@ void CFuncTankCombineCannon::FuncTankPostThink()
 			AddSpawnFlags( SF_TANK_AIM_AT_POS );
 
 			Vector vecTargetPosition = GetTargetPosition();
+#ifdef DEATHMATCH
+			CBasePlayer *pPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
+#else
 			CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 			Vector vecToPlayer = pPlayer->WorldSpaceCenter() - GetAbsOrigin();
 			vecToPlayer.NormalizeInPlace();
 
@@ -4269,7 +4289,7 @@ void CFuncTankCombineCannon::FuncTankPostThink()
 
 				if( trLOS.fraction < trShoot.fraction )
 				{
-					// block LOS brushes.
+					// Damn block LOS brushes.
 					continue;
 				}
 
@@ -4362,6 +4382,24 @@ void CFuncTankCombineCannon::Fire( int bulletCount, const Vector &barrelEnd, con
 void CFuncTankCombineCannon::MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType )
 {
 	// If the shot passed near the player, shake the screen.
+#ifdef DEATHMATCH
+	int			i;
+	for ( i = 1; i <= gpGlobals->maxClients; i++ )
+	{
+		CBaseEntity *pPlayer = UTIL_PlayerByIndex( i );
+		Vector vecPlayer = pPlayer->EyePosition();
+
+		Vector vecNearestPoint = PointOnLineNearestPoint( vecTracerSrc, tr.endpos, vecPlayer );
+
+		float flDist = vecPlayer.DistTo( vecNearestPoint );
+
+		if( flDist >= 10.0f && flDist <= 120.0f )
+		{
+			// Don't shake the screen if we're hit (within 10 inches), but do shake if a shot otherwise comes within 10 feet.
+			UTIL_ScreenShake( vecNearestPoint, 10, 60, 0.3, 120.0f, SHAKE_START, false );
+		}
+	}
+#else
 	if( AI_IsSinglePlayer() )
 	{
 		Vector vecPlayer = AI_GetSinglePlayer()->EyePosition();
@@ -4376,6 +4414,7 @@ void CFuncTankCombineCannon::MakeTracer( const Vector &vecTracerSrc, const trace
 			UTIL_ScreenShake( vecNearestPoint, 10, 60, 0.3, 120.0f, SHAKE_START, false );
 		}
 	}
+#endif
 
 	// Send the railgun effect
 	DispatchParticleEffect( "Weapon_Combine_Ion_Cannon", vecTracerSrc, tr.endpos, vec3_angle, NULL );

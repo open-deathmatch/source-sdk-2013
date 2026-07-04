@@ -149,7 +149,9 @@ IEntityFactory *CEntityFactoryDictionary::FindFactory( const char *pClassName )
 //-----------------------------------------------------------------------------
 void CEntityFactoryDictionary::InstallFactory( IEntityFactory *pFactory, const char *pClassName )
 {
+#ifndef DEATHMATCH
 	Assert( FindFactory( pClassName ) == NULL );
+#endif
 	m_Factories.Insert( pClassName, pFactory );
 }
 
@@ -596,6 +598,60 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 
 	return UTIL_PlayerByIndex( 1 );
 }
+
+#ifdef DEATHMATCH
+CBasePlayer* UTIL_GetNearestPlayer( const Vector& pos )
+{
+	CBasePlayer* pPlayer = NULL;
+	float	flNearestDistSqr = FLT_MAX;
+	float	flDistSqr;
+	for ( int iClient = 1; iClient <= gpGlobals->maxClients; ++iClient )
+	{
+		CBasePlayer* pEnt = UTIL_PlayerByIndex( iClient );
+		if ( !pEnt || !pEnt->IsPlayer() )
+			continue;
+
+		// Distance is the deciding factor
+		flDistSqr = ( pos - pEnt->GetAbsOrigin() ).LengthSqr();
+
+		// Closer, take it
+		if ( flDistSqr < flNearestDistSqr )
+		{
+			flNearestDistSqr = flDistSqr;
+			pPlayer = pEnt;
+		}
+	}
+
+	return pPlayer;
+}
+
+CBasePlayer* UTIL_GetNearestVisiblePlayer( CBaseEntity* pEntity, int mask )
+{
+	const Vector& pos = pEntity->GetAbsOrigin();
+
+	CBasePlayer* pPlayer = NULL;
+	float	flNearestDistSqr = FLT_MAX;
+	float	flDistSqr;
+	for ( int iClient = 1; iClient <= gpGlobals->maxClients; ++iClient )
+	{
+		CBasePlayer* pEnt = UTIL_PlayerByIndex( iClient );
+		if ( !pEnt || !pEnt->IsPlayer() )
+			continue;
+
+		// Distance is the deciding factor
+		flDistSqr = ( pos - pEnt->GetAbsOrigin() ).LengthSqr();
+
+		// Closer, take it
+		if ( flDistSqr < flNearestDistSqr && pEntity->FVisible( pEnt, mask ) )
+		{
+			flNearestDistSqr = flDistSqr;
+			pPlayer = pEnt;
+		}
+	}
+
+	return pPlayer;
+}
+#endif
 
 //
 // Get the local player on a listen server - this is for multiplayer use only

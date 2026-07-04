@@ -162,7 +162,11 @@ void CColorCorrectionVolume::Spawn( void )
 
 bool CColorCorrectionVolume::PassesTriggerFilters( CBaseEntity *pEntity )
 {
-	if( pEntity == UTIL_GetLocalPlayer() )
+#ifdef DEATHMATCH
+	if ( pEntity && pEntity->IsPlayer() )
+#else
+	if ( pEntity == UTIL_GetLocalPlayer() )
+#endif
 		return true;
 
 	return false;

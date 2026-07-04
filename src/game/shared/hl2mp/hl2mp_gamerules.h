@@ -135,7 +135,9 @@ public:
 	void	ManageObjectRelocation( void );
 	void    CheckChatForReadySignal( CHL2MP_Player *pPlayer, const char *chatmsg );
 	const char *GetChatFormat( bool bTeamOnly, CBasePlayer *pPlayer );
-
+#ifdef DEATHMATCH
+	virtual void InitDefaultAIRelationships( void );
+#endif
 #endif
 
 	bool IsOfficialMap( void );
@@ -151,6 +153,17 @@ public:
 	bool	IsTeamplay( void ) { return m_bTeamPlayEnabled;	}
 	void	CheckAllPlayersReady( void );
 
+#ifdef DEATHMATCH
+#ifndef CLIENT_DLL
+	bool	NPC_ShouldDropGrenade( CBasePlayer *pRecipient );
+	bool	NPC_ShouldDropHealth( CBasePlayer *pRecipient );
+	void	NPC_DroppedHealth( void );
+	void	NPC_DroppedGrenade( void );
+
+	virtual bool IsAlyxInDarknessMode();
+#endif
+#endif
+
 	virtual bool IsConnectedUserInfoChangeAllowed( CBasePlayer *pPlayer );
 	
 private:
@@ -163,6 +176,13 @@ private:
 	bool m_bCompleteReset;
 	bool m_bAwaitingReadyRestart;
 	bool m_bHeardAllPlayersReady;
+
+#ifdef DEATHMATCH
+#ifndef CLIENT_DLL
+	float	m_flLastHealthDropTime;
+	float	m_flLastGrenadeDropTime;
+#endif
+#endif
 
 #ifndef CLIENT_DLL
 	bool m_bChangelevelDone;

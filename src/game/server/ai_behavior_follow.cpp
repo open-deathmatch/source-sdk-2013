@@ -22,6 +22,10 @@
 	#include "info_darknessmode_lightsource.h"
 #endif
 
+#ifdef DEATHMATCH
+	#include "hl2mp_gamerules.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -111,7 +115,7 @@ public:
 		else
 		{
 			int result = 0;
-			for ( intp i = pGroup->followers.Head(); i != pGroup->followers.InvalidIndex(); i = pGroup->followers.Next( i ) )
+			for ( int i = pGroup->followers.Head(); i != pGroup->followers.InvalidIndex(); i = pGroup->followers.Next( i ) )
 			{
 				if ( pGroup->followers[i].hFollower && pGroup->followers[i].hFollower->ClassMatches( iszClassname ) )
 				{
@@ -131,7 +135,7 @@ public:
 			return 0;
 		}
 
-		intp h = pGroup->followers.Head();
+		int h = pGroup->followers.Head();
 
 		while( h != pGroup->followers.InvalidIndex() )
 		{
@@ -764,7 +768,11 @@ void CAI_FollowBehavior::GatherConditions( void )
 
 #ifdef HL2_EPISODIC
 	// Let followers know if the player is lit in the darkness
+#ifndef DEATHMATCH
 	if ( GetFollowTarget()->IsPlayer() && HL2GameRules()->IsAlyxInDarknessMode() )
+#else
+	if ( GetFollowTarget()->IsPlayer() && HL2MPRules()->IsAlyxInDarknessMode() )
+#endif
 	{
 		if ( LookerCouldSeeTargetInDarkness( GetOuter(), GetFollowTarget() ) )
 		{
@@ -848,7 +856,11 @@ bool CAI_FollowBehavior::ShouldMoveToFollowTarget()
 		return false;
 
 #ifdef HL2_EPISODIC
+#ifndef DEATHMATCH
 	if ( HL2GameRules()->IsAlyxInDarknessMode() )
+#else
+	if ( HL2MPRules()->IsAlyxInDarknessMode() )
+#endif
 	{
 		// If we're in darkness mode, the player needs to be lit by
 		// darkness, but we don't need line of sight to him.
@@ -1968,7 +1980,11 @@ void CAI_FollowBehavior::BuildScheduleTestBits()
 
 #ifdef HL2_EPISODIC
 		// In Alyx darkness mode, break on the player turning their flashlight off
+#ifndef DEATHMATCH
 		if ( HL2GameRules()->IsAlyxInDarknessMode() )
+#else
+		if ( HL2MPRules()->IsAlyxInDarknessMode() )
+#endif
 		{
 			if ( IsCurSchedule(SCHED_FOLLOW, false) || IsCurSchedule(SCHED_MOVE_TO_FACE_FOLLOW_TARGET, false) ||
 				 IsCurSchedule(SCHED_FACE_FOLLOW_TARGET, false) )
@@ -2130,6 +2146,16 @@ void CAI_FollowGoal::EnableGoal( CAI_BaseNPC *pAI )
 		return;
 	
 	CBaseEntity *pGoalEntity = GetGoalEntity();
+#ifdef DEATHMATCH
+	if ( !pGoalEntity )
+	{
+		if ( pAI->IRelationType(UTIL_GetNearestPlayer(pAI->GetAbsOrigin())) == D_LI )
+		{
+			pGoalEntity = UTIL_GetNearestPlayer(pAI->GetAbsOrigin());
+			SetGoalEntity( pGoalEntity );
+		}
+	}
+#else
 	if ( !pGoalEntity && AI_IsSinglePlayer() )
 	{
 		if ( pAI->IRelationType(UTIL_GetLocalPlayer()) == D_LI )
@@ -2138,6 +2164,7 @@ void CAI_FollowGoal::EnableGoal( CAI_BaseNPC *pAI )
 			SetGoalEntity( pGoalEntity );
 		}
 	}
+#endif
 
 	if ( pGoalEntity )
 		pBehavior->SetFollowGoal( this );
@@ -2561,7 +2588,7 @@ bool CAI_FollowManager::AddFollower( CBaseEntity *pTarget, CAI_BaseNPC *pFollowe
 
 		AI_FollowSlot_t *pSlot 		= &pGroup->pFormation->pSlots[slot];
 
-		intp i = pGroup->followers.AddToTail( );
+		int i = pGroup->followers.AddToTail( );
 
 		AI_Follower_t *iterNode = &pGroup->followers[i];
 		iterNode->hFollower 	= pFollower;
@@ -2641,8 +2668,8 @@ bool CAI_FollowManager::RedistributeSlots( AI_FollowGroup_t *pGroup )
 	{
 		AI_FollowSlot_t *  pSlot 	  = &pGroup->pFormation->pSlots[bestSlot];
 		Vector			   slotPos	  = originFollowed + pSlot->position;
-		intp  h			= pGroup->followers.Head();
-		intp  hBest 		= pGroup->followers.InvalidIndex();
+		int  h			= pGroup->followers.Head();
+		int  hBest 		= pGroup->followers.InvalidIndex();
 		float 			   distSqBest = FLT_MAX;
 		
 		while ( h != pGroup->followers.InvalidIndex() )
@@ -2691,7 +2718,7 @@ void CAI_FollowManager::ChangeFormation( AI_FollowManagerInfoHandle_t& hInfo, AI
 	if ( pNewFormation == pGroup->pFormation )
 		return;
 
-	intp h = pGroup->followers.Head();
+	int h = pGroup->followers.Head();
 		
 	while ( h != pGroup->followers.InvalidIndex() )
 	{
@@ -2846,7 +2873,7 @@ AI_FollowGroup_t *CAI_FollowManager::FindFollowerGroup( CBaseEntity *pFollower )
 {
 	for ( int i = 0; i < m_groups.Count(); i++ )
 	{
-		intp h = m_groups[i]->followers.Head();
+		int h = m_groups[i]->followers.Head();
 		while( h != m_groups[i]->followers.InvalidIndex() )
 		{
 			AI_Follower_t *p = &m_groups[i]->followers[h];

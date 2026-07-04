@@ -1024,6 +1024,7 @@ void CBaseCombatWeapon::Equip( CBaseCombatCharacter *pOwner )
 
 void CBaseCombatWeapon::SetActivity( Activity act, float duration ) 
 { 
+#ifndef DEATHMATCH
 	//Adrian: Oh man...
 #if !defined( CLIENT_DLL ) && (defined( HL2MP ) || defined( PORTAL ))
 	SetModel( GetWorldModel() );
@@ -1038,6 +1039,21 @@ void CBaseCombatWeapon::SetActivity( Activity act, float duration )
 	//Adrian: Oh man again...
 #if !defined( CLIENT_DLL ) && (defined( HL2MP ) || defined( PORTAL ))
 	SetModel( GetViewModel() );
+#endif
+#else
+	//Adrian: Oh man...
+	if ( GetOwner()->IsPlayer() )
+		SetModel( GetWorldModel() );
+
+	int sequence = SelectWeightedSequence( act );
+
+	// FORCE IDLE on sequences we don't have (which should be many)
+	if ( sequence == ACTIVITY_NOT_AVAILABLE )
+		sequence = SelectWeightedSequence( ACT_VM_IDLE );
+
+	//Adrian: Oh man again...
+	if ( GetOwner()->IsPlayer() )
+		SetModel( GetViewModel() );
 #endif
 
 	if ( sequence != ACTIVITY_NOT_AVAILABLE )

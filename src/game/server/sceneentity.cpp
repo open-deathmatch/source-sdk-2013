@@ -1457,6 +1457,10 @@ void CSceneEntity::DispatchEndInterrupt( CChoreoScene *scene, CChoreoEvent *even
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartExpression( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->AddSceneEvent( scene, event );
 }
 
@@ -1467,6 +1471,10 @@ void CSceneEntity::DispatchStartExpression( CChoreoScene *scene, CBaseFlex *acto
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndExpression( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->RemoveSceneEvent( scene, event, false );
 }
 
@@ -1477,6 +1485,10 @@ void CSceneEntity::DispatchEndExpression( CChoreoScene *scene, CBaseFlex *actor,
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartFlexAnimation( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->AddSceneEvent( scene, event );
 }
 
@@ -1487,6 +1499,10 @@ void CSceneEntity::DispatchStartFlexAnimation( CChoreoScene *scene, CBaseFlex *a
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndFlexAnimation( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->RemoveSceneEvent( scene, event, false );
 }
 
@@ -1497,6 +1513,10 @@ void CSceneEntity::DispatchEndFlexAnimation( CChoreoScene *scene, CBaseFlex *act
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartGesture( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	// Ingore null gestures
 	if ( !Q_stricmp( event->GetName(), "NULL" ) )
 		return;
@@ -1512,6 +1532,10 @@ void CSceneEntity::DispatchStartGesture( CChoreoScene *scene, CBaseFlex *actor, 
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndGesture( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	// Ingore null gestures
 	if ( !Q_stricmp( event->GetName(), "NULL" ) )
 		return;
@@ -1526,6 +1550,10 @@ void CSceneEntity::DispatchEndGesture( CChoreoScene *scene, CBaseFlex *actor, CC
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartGeneric( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	CBaseEntity *pTarget = FindNamedEntity( event->GetParameters2( ) );
 	actor->AddSceneEvent( scene, event, pTarget );
 }
@@ -1538,6 +1566,10 @@ void CSceneEntity::DispatchStartGeneric( CChoreoScene *scene, CBaseFlex *actor, 
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndGeneric( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1548,12 +1580,20 @@ void CSceneEntity::DispatchEndGeneric( CChoreoScene *scene, CBaseFlex *actor, CC
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartLookAt( CChoreoScene *scene, CBaseFlex *actor, CBaseEntity *actor2, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->AddSceneEvent( scene, event, actor2 );
 }
 
 
 void CSceneEntity::DispatchEndLookAt( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1567,12 +1607,20 @@ void CSceneEntity::DispatchEndLookAt( CChoreoScene *scene, CBaseFlex *actor, CCh
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartMoveTo( CChoreoScene *scene, CBaseFlex *actor, CBaseEntity *actor2, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->AddSceneEvent( scene, event, actor2 );
 }
 
 
 void CSceneEntity::DispatchEndMoveTo( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1706,7 +1754,9 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 	if ( actor )
 	{
 		CPASAttenuationFilter filter( actor );
-
+#ifdef DEATHMATCH
+		filter.AddAllPlayers();
+#endif
 		if ( m_pRecipientFilter )
 		{
 			int filterCount = filter.GetRecipientCount();
@@ -1906,6 +1956,10 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 
 void CSceneEntity::DispatchEndSpeak( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1917,6 +1971,10 @@ void CSceneEntity::DispatchEndSpeak( CChoreoScene *scene, CBaseFlex *actor, CCho
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartFace( CChoreoScene *scene, CBaseFlex *actor, CBaseEntity *actor2, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->AddSceneEvent( scene, event, actor2 );
 }
 
@@ -1929,6 +1987,10 @@ void CSceneEntity::DispatchStartFace( CChoreoScene *scene, CBaseFlex *actor, CBa
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndFace( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1940,6 +2002,10 @@ void CSceneEntity::DispatchEndFace( CChoreoScene *scene, CBaseFlex *actor, CChor
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartSequence( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->AddSceneEvent( scene, event );
 }
 
@@ -1951,6 +2017,10 @@ void CSceneEntity::DispatchStartSequence( CChoreoScene *scene, CBaseFlex *actor,
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndSequence( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1962,6 +2032,10 @@ void CSceneEntity::DispatchEndSequence( CChoreoScene *scene, CBaseFlex *actor, C
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartPermitResponses( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->SetPermitResponse( gpGlobals->curtime + event->GetDuration() );
 }
 
@@ -1973,6 +2047,10 @@ void CSceneEntity::DispatchStartPermitResponses( CChoreoScene *scene, CBaseFlex 
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndPermitResponses( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef DEATHMATCH
+	if ( !actor )
+		return;
+#endif
 	actor->SetPermitResponse( 0 );
 }
 
@@ -2574,6 +2652,10 @@ void CSceneEntity::StartPlayback( void )
 			return;
 		}
 
+#ifdef DEATHMATCH
+		PrecacheScene( m_pScene );
+#endif
+
 		OnLoaded();
 
 		if ( ShouldNetwork() )
@@ -3017,7 +3099,11 @@ void CSceneEntity::StartEvent( float currenttime, CChoreoScene *scene, CChoreoEv
 				event->SetEndTime( event->GetStartTime() + 1.0 );
 			}
 
+#ifdef DEATHMATCH
+			if ( pActor )
+#else
 			if ( pActor && !IsMultiplayer() )
+#endif
 			{
 				CBaseEntity *pActor2 = NULL;
 				if ( event->GetParameters3( ) && strlen( event->GetParameters3( ) ) > 0 )
@@ -3042,7 +3128,11 @@ void CSceneEntity::StartEvent( float currenttime, CChoreoScene *scene, CChoreoEv
 		break;
 	case CChoreoEvent::FACE:
 		{
-			if ( pActor && !IsMultiplayer() )
+#ifdef DEATHMATCH
+		if ( pActor )
+#else
+		if ( pActor && !IsMultiplayer() )
+#endif
 			{
 				CBaseEntity *pActor2 = FindNamedEntity( event->GetParameters( ), pActor );
 				if ( pActor2 )
@@ -3253,7 +3343,11 @@ void CSceneEntity::EndEvent( float currenttime, CChoreoScene *scene, CChoreoEven
 	{
 	case CChoreoEvent::EXPRESSION:
 		{
-			if ( pActor && !IsMultiplayer() )
+#ifdef DEATHMATCH
+		if ( pActor )
+#else
+		if ( pActor && !IsMultiplayer() )
+#endif
 			{
 				DispatchEndExpression( scene, pActor, event );
 			}
@@ -3269,7 +3363,11 @@ void CSceneEntity::EndEvent( float currenttime, CChoreoScene *scene, CChoreoEven
 		break;
 	case CChoreoEvent::FLEXANIMATION:
 		{
-			if ( pActor && !IsMultiplayer() )
+#ifdef DEATHMATCH
+		if ( pActor )
+#else
+		if ( pActor && !IsMultiplayer() )
+#endif
 			{
 				DispatchEndFlexAnimation( scene, pActor, event );
 			}
@@ -3412,6 +3510,51 @@ bool CSceneEntity::ShouldNetwork() const
 	return false;
 }
 
+#ifdef DEATHMATCH
+CChoreoScene *CSceneEntity::LoadScene( const char *filename, IChoreoEventCallback *pCallback )
+{
+	char loadfile [ MAX_PATH ];
+	Q_strncpy( loadfile, filename, sizeof( loadfile ) );
+	Q_SetExtension( loadfile, ".vcd", sizeof( loadfile ) );
+	Q_FixSlashes( loadfile );
+
+	void *pBuffer = 0;
+	CChoreoScene *pScene;
+
+	int fileSize = filesystem->ReadFileEx( loadfile, "GAME", &pBuffer, true );
+	if ( fileSize )
+	{
+		g_TokenProcessor.SetBuffer( ( char * ) pBuffer );
+		pScene = ChoreoLoadScene( loadfile, NULL, &g_TokenProcessor, LocalScene_Printf );
+	}
+	else
+	{
+		// binary compiled vcd
+		pScene = new CChoreoScene( NULL );
+		if ( !CopySceneFileIntoMemory( loadfile, &pBuffer, &fileSize ) )
+		{
+			MissingSceneWarning( loadfile );
+			return NULL;
+		}
+		CUtlBuffer buf( pBuffer, fileSize, CUtlBuffer::READ_ONLY );
+		if ( !pScene->RestoreFromBinaryBuffer( buf, loadfile, &g_ChoreoStringPool ) )
+		{
+			Warning( "CSceneEntity::LoadScene: Unable to load scene '%s'\n", loadfile );
+			delete pScene;
+			pScene = NULL;
+		}
+	}
+
+	if ( pScene )
+	{
+		pScene->SetPrintFunc( LocalScene_Printf );
+		pScene->SetEventCallbackInterface( pCallback );
+	}
+
+	FreeSceneFileMemory( pBuffer );
+	return pScene;
+}
+#else
 CChoreoScene *CSceneEntity::LoadScene( const char *filename, IChoreoEventCallback *pCallback )
 {
 	DevMsg( 2, "Blocking load of scene from '%s'\n", filename );
@@ -3447,6 +3590,7 @@ CChoreoScene *CSceneEntity::LoadScene( const char *filename, IChoreoEventCallbac
 	FreeSceneFileMemory( pBuffer );
 	return pScene;
 }
+#endif
 
 CChoreoScene *BlockingLoadScene( const char *filename )
 {
@@ -3862,7 +4006,18 @@ CBaseEntity *CSceneEntity::FindNamedEntity( const char *name, CBaseEntity *pActo
 
 	if ( !stricmp( name, "Player" ) || !stricmp( name, "!player" ))
 	{
+#ifndef DEATHMATCH
 		entity = ( gpGlobals->maxClients == 1 ) ? ( CBaseEntity * )UTIL_GetLocalPlayer() : NULL;
+#else
+		if (pActor == NULL)
+		{
+			entity = ( gpGlobals->maxClients == 1 ) ? ( CBaseEntity * )UTIL_GetLocalPlayer() : NULL;
+		}
+		else
+		{
+			entity = ( CBaseEntity * )UTIL_GetNearestPlayer( pActor->GetAbsOrigin() );
+		}
+#endif
 	}
 	else if ( !stricmp( name, "!target1" ) )
 	{
@@ -3989,7 +4144,11 @@ CBaseEntity *CSceneEntity::FindNamedEntityClosest( const char *name, CBaseEntity
 	} 
 	else if ( !stricmp( name, "Player" ) || !stricmp( name, "!player" ))
 	{
-		entity = ( gpGlobals->maxClients == 1 ) ? ( CBaseEntity * )UTIL_GetLocalPlayer() : NULL;
+#ifndef DEATHMATCH
+		entity = ( gpGlobals->maxClients == 1 ) ? ( CBaseEntity * ) UTIL_GetLocalPlayer() : NULL;
+#else
+		entity = ( CBaseEntity * ) UTIL_GetNearestPlayer( pActor->GetAbsOrigin() );
+#endif
 		return entity;
 	}
 	else if ( !stricmp( name, "!target1" ) )
@@ -4777,6 +4936,80 @@ int GetSceneSpeechCount( char const *pszScene )
 // Purpose: Used for precaching instanced scenes
 // Input  : *pszScene - 
 //-----------------------------------------------------------------------------
+#ifdef DEATHMATCH
+void PrecacheInstancedScene( char const *pszScene )
+{
+	static int nMakingReslists = -1;
+
+	if ( nMakingReslists == -1 )
+	{
+		nMakingReslists = CommandLine()->FindParm( "-makereslists" ) > 0 ? 1 : 0;
+	}
+
+	if ( nMakingReslists == 1 )
+	{
+		// Just stat the file to add to reslist
+		g_pFullFileSystem->Size( pszScene );
+	}
+
+	SceneCachedData_t sceneData;
+
+	char loadfile [ MAX_PATH ];
+	Q_strncpy( loadfile, pszScene, sizeof( loadfile ) );
+	Q_SetExtension( loadfile, ".vcd", sizeof( loadfile ) );
+	Q_FixSlashes( loadfile );
+
+	// Attempt to precache manually
+	void *pBuffer = NULL;
+	if ( filesystem->ReadFileEx( loadfile, "GAME", &pBuffer, false, true ) )
+	{
+		g_TokenProcessor.SetBuffer( ( char * ) pBuffer );
+		CChoreoScene *pScene = ChoreoLoadScene( loadfile, NULL, &g_TokenProcessor, LocalScene_Printf );
+		if ( pScene )
+		{
+			for ( int i = 0; i < pScene->GetNumEvents(); i++ )
+			{
+				CChoreoEvent *pEvent = pScene->GetEvent( i );
+				if ( pEvent && pEvent->GetType() == CChoreoEvent::SPEAK )
+				{
+					CBaseEntity::PrecacheScriptSound( pEvent->GetParameters() );
+
+					// Precache CC token
+					if ( pEvent->GetCloseCaptionType() == CChoreoEvent::CC_MASTER &&
+						 pEvent->GetNumSlaves() > 0 )
+					{
+						char tok [ CChoreoEvent::MAX_CCTOKEN_STRING ];
+						if ( pEvent->GetPlaybackCloseCaptionToken( tok, sizeof( tok ) ) )
+						{
+							CBaseEntity::PrecacheScriptSound( tok );
+						}
+					}
+				}
+			}
+		}
+	}
+	else if ( !scenefilecache->GetSceneCachedData( pszScene, &sceneData ) )
+	{
+		// This warning was meant for when scenes.image was supposed to be the sole method of loading scenes.
+		// It's been deactivated as part of the raw file support, as even if this was somehow on the Xbox 360,
+		// it would never trip anyway because if the file existed, it would've been read earlier.
+		//if ( developer.GetInt() && ( IsX360() && ( g_pFullFileSystem->GetDVDMode() != DVDMODE_STRICT ) && g_pFullFileSystem->FileExists( pszScene, "GAME" ) ) )
+		//{
+		//	Warning( "PrecacheInstancedScene: Missing scene '%s' from scene image cache.\nRebuild scene image cache!\n", pszScene );
+		//}
+	}
+	else
+	{
+		for ( int i = 0; i < sceneData.numSounds; ++i )
+		{
+			short stringId = scenefilecache->GetSceneCachedSound( sceneData.sceneId, i );
+			CBaseEntity::PrecacheScriptSound( scenefilecache->GetSceneString( stringId ) );
+		}
+	}
+
+	g_pStringTableClientSideChoreoScenes->AddString( CBaseEntity::IsServer(), pszScene );
+}
+#else
 void PrecacheInstancedScene( char const *pszScene )
 {
 	static int nMakingReslists = -1;
@@ -4814,6 +5047,7 @@ void PrecacheInstancedScene( char const *pszScene )
 
 	g_pStringTableClientSideChoreoScenes->AddString( CBaseEntity::IsServer(), pszScene );
 }
+#endif
 
 HSCRIPT ScriptCreateSceneEntity( const char* pszScene )
 {

@@ -307,13 +307,23 @@ bool CAI_Expresser::SpeakFindResponse( AI_Response &outResponse, AIConcept_t con
 		}
 	}
 
+	CBaseFlex *pOuter = GetOuter();
+#ifdef DEATHMATCH
+	if ( !pOuter )
+		return NULL;
+#endif
+
 	// Let our outer fill in most match criteria
-	GetOuter()->ModifyOrAppendCriteria( set );
+	pOuter->ModifyOrAppendCriteria( set );
 
 	// Append local player criteria to set, but not if this is a player doing the talking
-	if ( !GetOuter()->IsPlayer() )
+	if ( !pOuter->IsPlayer() )
 	{
+#ifdef DEATHMATCH
+		CBasePlayer *pPlayer = AI_GetNearestPlayer( pOuter->GetAbsOrigin() );
+#else
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
+#endif
 		if( pPlayer )
 			pPlayer->ModifyOrAppendPlayerCriteria( set );
 	}
@@ -323,10 +333,10 @@ bool CAI_Expresser::SpeakFindResponse( AI_Response &outResponse, AIConcept_t con
 
 	if ( rr_debugresponses.GetInt() == 3 )
 	{
-		if ( ( GetOuter()->MyNPCPointer() && GetOuter()->m_debugOverlays & OVERLAY_NPC_SELECTED_BIT ) || GetOuter()->IsPlayer() )
+		if ( ( pOuter->MyNPCPointer() && pOuter->m_debugOverlays & OVERLAY_NPC_SELECTED_BIT ) || pOuter->IsPlayer() )
 		{
-			const char *pszName = GetOuter()->IsPlayer() ?
-									((CBasePlayer*)GetOuter())->GetPlayerName() : GetOuter()->GetDebugName();
+			const char *pszName = pOuter->IsPlayer() ?
+									((CBasePlayer*) pOuter )->GetPlayerName() : pOuter->GetDebugName();
 
 			if ( found )
 			{
@@ -879,7 +889,11 @@ void CAI_ExpresserHost_NPC_DoModifyOrAppendCriteria( CAI_BaseNPC *pSpeaker, AI_C
 		set.AppendCriteria( "weapon", "none" );
 	}
 
+#ifdef DEATHMATCH
+	CBasePlayer *pPlayer = AI_GetNearestPlayer( pSpeaker->GetAbsOrigin() );
+#else
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+#endif
 	if ( pPlayer )
 	{
 		Vector distance = pPlayer->GetAbsOrigin() - pSpeaker->GetAbsOrigin();

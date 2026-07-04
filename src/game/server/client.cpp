@@ -1059,7 +1059,9 @@ void CC_Player_PhysSwap( void )
 
 			if ( !Q_stricmp( strWeaponName, "weapon_physcannon" ) )
 			{
+#ifndef DEATHMATCH
 				PhysCannonForceDrop( pWeapon, NULL );
+#endif
 				pPlayer->SelectLastItem();
 			}
 			else

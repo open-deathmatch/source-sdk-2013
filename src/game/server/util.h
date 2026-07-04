@@ -227,6 +227,11 @@ CBasePlayer *UTIL_PlayerBySteamID( const CSteamID &steamID );
 // not useable in multiplayer - see UTIL_GetListenServerHost()
 CBasePlayer* UTIL_GetLocalPlayer( void );
 
+#ifdef DEATHMATCH
+CBasePlayer* UTIL_GetNearestPlayer( const Vector& pos );
+CBasePlayer* UTIL_GetNearestVisiblePlayer( CBaseEntity* pEntity, int mask = MASK_BLOCKLOS );
+#endif
+
 // get the local player on a listen server
 CBasePlayer *UTIL_GetListenServerHost( void );
 

@@ -173,6 +173,9 @@ public:
 public:
 
 	int							m_iKeyBits;
+#ifdef DEATHMATCH
+	bool						m_bSkipClear;
+#endif
 #ifndef _XBOX
 	float						m_flMouseSensitivity;
 	float						m_flMouseSensitivityFactor;

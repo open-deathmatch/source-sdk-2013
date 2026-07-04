@@ -1241,7 +1241,11 @@ bool CBaseFlex::ProcessFlexAnimationSceneEvent( CSceneEventInfo *info, CChoreoSc
 					// only check occasionally
 					else if (info->m_flNext <= gpGlobals->curtime)
 					{
+#ifdef DEATHMATCH
+						CBasePlayer *pPlayer = AI_GetNearestVisiblePlayer( this );
+#else
 						CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+#endif
 
 						// if not in view, disable
 						info->m_bHasArrived = (pPlayer && !pPlayer->FInViewCone( this ) );
@@ -2757,7 +2761,11 @@ void CFlexCycler::Think( void )
 	Vector forward, right, up;
 	GetVectors( &forward, &right, &up );
 
+#ifdef DEATHMATCH
+	CBaseEntity *pPlayer = (CBaseEntity *)UTIL_GetNearestPlayer( GetAbsOrigin() );
+#else
 	CBaseEntity *pPlayer = (CBaseEntity *)UTIL_GetLocalPlayer();
+#endif
 	if (pPlayer)
 	{
 		if (pPlayer->GetSmoothedVelocity().Length() != 0 && DotProduct( forward, pPlayer->EyePosition() - EyePosition()) > 0.5)

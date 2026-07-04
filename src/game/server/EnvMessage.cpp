@@ -105,7 +105,11 @@ void CMessage::InputShowMessage( inputdata_t &inputdata )
 		}
 		else
 		{
+#ifdef DEATHMATCH
+			pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
+#else
 			pPlayer = (gpGlobals->maxClients > 1) ? NULL : UTIL_GetLocalPlayer();
+#endif
 		}
 
 		if ( pPlayer && pPlayer->IsPlayer() )
@@ -219,12 +223,18 @@ void CCredits::RollOutroCredits()
 {
 	sv_unlockedchapters.SetValue( "15" );
 	
+#ifndef DEATHMATCH
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 
 	CSingleUserRecipientFilter user( pPlayer );
 	user.MakeReliable();
 
 	UserMessageBegin( user, "CreditsMsg" );
+#else
+	CReliableBroadcastRecipientFilter filter;
+
+	UserMessageBegin( filter, "CreditsMsg" );
+#endif
 		WRITE_BYTE( 3 );
 	MessageEnd();
 }
@@ -241,20 +251,32 @@ void CCredits::InputRollOutroCredits( inputdata_t &inputdata )
 
 void CCredits::InputShowLogo( inputdata_t &inputdata )
 {
+#ifndef DEATHMATCH
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 
 	CSingleUserRecipientFilter user( pPlayer );
 	user.MakeReliable();
+#else
+	CReliableBroadcastRecipientFilter filter;
+#endif
 
 	if ( m_flLogoLength )
 	{
+#ifndef DEATHMATCH
 		UserMessageBegin( user, "LogoTimeMsg" );
+#else
+		UserMessageBegin( filter, "LogoTimeMsg" );
+#endif
 			WRITE_FLOAT( m_flLogoLength );
 		MessageEnd();
 	}
 	else
 	{
+#ifndef DEATHMATCH
 		UserMessageBegin( user, "CreditsMsg" );
+#else
+		UserMessageBegin( filter, "CreditsMsg" );
+#endif
 			WRITE_BYTE( 1 );
 		MessageEnd();
 	}
@@ -267,12 +289,18 @@ void CCredits::InputSetLogoLength( inputdata_t &inputdata )
 
 void CCredits::InputRollCredits( inputdata_t &inputdata )
 {
+#ifndef DEATHMATCH
 	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 
 	CSingleUserRecipientFilter user( pPlayer );
 	user.MakeReliable();
 
 	UserMessageBegin( user, "CreditsMsg" );
+#else
+	CReliableBroadcastRecipientFilter filter;
+
+	UserMessageBegin( filter, "CreditsMsg" );
+#endif
 		WRITE_BYTE( 2 );
 	MessageEnd();
 }

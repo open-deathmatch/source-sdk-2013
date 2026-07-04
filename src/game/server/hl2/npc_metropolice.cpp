@@ -18,7 +18,11 @@
 #include "hl2_player.h"
 #include "iservervehicle.h"
 #include "items.h"
+#ifndef DEATHMATCH
 #include "hl2_gamerules.h"
+#else
+#include "hl2mp_gamerules.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -3101,13 +3105,25 @@ void CNPC_MetroPolice::Event_Killed( const CTakeDamageInfo &info )
 
 	if ( pPlayer != NULL )
 	{
+#ifndef DEATHMATCH
 		CHalfLife2 *pHL2GameRules = static_cast<CHalfLife2 *>(g_pGameRules);
+#else
+		CHL2MPRules *pHL2MPRules = static_cast<CHL2MPRules *>(g_pGameRules);
+#endif
 
 		// Attempt to drop health
+#ifndef DEATHMATCH
 		if ( pHL2GameRules->NPC_ShouldDropHealth( pPlayer ) )
+#else
+		if ( pHL2MPRules->NPC_ShouldDropHealth( pPlayer ) )
+#endif
 		{
 			DropItem( "item_healthvial", WorldSpaceCenter()+RandomVector(-4,4), RandomAngle(0,360) );
+#ifndef DEATHMATCH
 			pHL2GameRules->NPC_DroppedHealth();
+#else
+			pHL2MPRules->NPC_DroppedHealth();
+#endif
 		}
 	}
 
@@ -4006,7 +4022,11 @@ void CNPC_MetroPolice::AdministerJustice( void )
 //-----------------------------------------------------------------------------
 int CNPC_MetroPolice::SelectSchedule( void )
 {
+#ifdef DEATHMATCH
+	if ( !GetEnemy() && HasCondition( COND_IN_PVS ) && AI_GetNearestPlayer( GetAbsOrigin() ) && !AI_GetNearestPlayer( GetAbsOrigin() )->IsAlive() )
+#else
 	if ( !GetEnemy() && HasCondition( COND_IN_PVS ) && AI_GetSinglePlayer() && !AI_GetSinglePlayer()->IsAlive() )
+#endif
 	{
 		return SCHED_PATROL_WALK;
 	}
@@ -5111,7 +5131,11 @@ void CNPC_MetroPolice::VPhysicsCollision( int index, gamevcollisionevent_t *pEve
 
 	if ( pEvent->pObjects[otherIndex]->GetGameFlags() & FVPHYSICS_PLAYER_HELD )
 	{
-		CHL2_Player *pPlayer = dynamic_cast<CHL2_Player *>(UTIL_PlayerByIndex( 1 ));
+#ifdef DEATHMATCH
+		CHL2MP_Player *pPlayer = dynamic_cast< CHL2MP_Player * >( AI_GetNearestPlayer( GetAbsOrigin() ) );
+#else
+		CHL2_Player *pPlayer = dynamic_cast< CHL2_Player * >( UTIL_PlayerByIndex( 1 ) );
+#endif
 
 		// See if it's being held by the player
 		if ( pPlayer != NULL && pPlayer->IsHoldingEntity( pHitEntity ) )

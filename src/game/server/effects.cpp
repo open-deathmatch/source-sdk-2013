@@ -1130,7 +1130,11 @@ Vector CBlood::BloodPosition( CBaseEntity *pActivator )
 		}
 		else
 		{
+#ifdef DEATHMATCH
+			player = UTIL_GetNearestPlayer( GetAbsOrigin() );
+#else
 			player = UTIL_GetLocalPlayer();
+#endif
 		}
 
 		if ( player )
