@@ -355,6 +355,7 @@ bool CWeaponPistol::Reload( void )
 	if ( fRet )
 	{
 		WeaponSound( RELOAD );
+		ToHL2MPPlayer( GetOwner() )->DoAnimationEvent( PLAYERANIMEVENT_RELOAD );
 		m_flAccuracyPenalty = 0.0f;
 	}
 	return fRet;

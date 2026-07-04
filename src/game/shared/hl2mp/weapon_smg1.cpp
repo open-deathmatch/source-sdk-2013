@@ -325,6 +325,7 @@ bool CWeaponSMG1::Reload( void )
 		m_flNextSecondaryAttack = GetOwner()->m_flNextAttack = fCacheTime;
 
 		WeaponSound( RELOAD );
+		ToHL2MPPlayer( GetOwner() )->DoAnimationEvent( PLAYERANIMEVENT_RELOAD );
 	}
 
 	return fRet;
@@ -354,7 +355,7 @@ void CWeaponSMG1::AddViewKick( void )
 void CWeaponSMG1::SecondaryAttack( void )
 {
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
 	
 	if ( pPlayer == NULL )
 		return;
@@ -395,7 +396,7 @@ void CWeaponSMG1::SecondaryAttack( void )
 	SendWeaponAnim( ACT_VM_SECONDARYATTACK );
 
 	// player "shoot" animation
-	pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 
 	// Decrease ammo
 	pPlayer->RemoveAmmo( 1, m_iSecondaryAmmoType );

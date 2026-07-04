@@ -9,6 +9,9 @@
 
 #include "simtimer.h"
 #include "ai_component.h"
+#ifdef DEATHMATCH
+#include "baseplayer_shared.h"
+#endif
 
 #if defined( _WIN32 )
 #pragma once
@@ -24,18 +27,11 @@
 inline CBasePlayer *AI_GetSinglePlayer()
 {
 #ifdef DEATHMATCH
-	CBasePlayer* pHostPlayer = UTIL_GetListenServerHost();
-	if ( pHostPlayer != NULL )
-		return pHostPlayer;
-
-	for ( int iClient = 1; iClient <= gpGlobals->maxClients; ++iClient )
+	if ( !engine->IsDedicatedServer() )
 	{
-		CBasePlayer* pEnt = UTIL_PlayerByIndex( iClient );
-		if ( !pEnt || !pEnt->IsPlayer() )
-			continue;
-
-		// Return the first player we can get a hold of.
-		return pEnt;
+		CBasePlayer *pHostPlayer = UTIL_GetListenServerHost();
+		if ( pHostPlayer != NULL )
+			return pHostPlayer;
 	}
 #else
 	if ( gpGlobals->maxClients > 1 )
@@ -50,17 +46,17 @@ inline CBasePlayer *AI_GetSinglePlayer()
 #ifdef DEATHMATCH
 // Andrew; these have been moved to UTIL_* functions, since we use them outside
 // of the scope of AI_
-inline CBasePlayer* AI_GetNearestPlayer( const Vector& pos )
+inline CBasePlayer *AI_GetNearestPlayer( const Vector& pos )
 {
 	return UTIL_GetNearestPlayer( pos );
 }
 
-inline CBasePlayer* AI_GetNearestPlayer( const CBaseEntity* pEntity )
+inline CBasePlayer *AI_GetNearestPlayer( const CBaseEntity* pEntity )
 {
 	return pEntity ? AI_GetNearestPlayer( pEntity->GetAbsOrigin() ) : AI_GetNearestPlayer( vec3_origin );
 }
 
-inline CBasePlayer* AI_GetNearestVisiblePlayer( CBaseEntity* pEntity, int mask = MASK_BLOCKLOS )
+inline CBasePlayer *AI_GetNearestVisiblePlayer( CBaseEntity *pEntity, int mask = MASK_BLOCKLOS )
 {
 	return UTIL_GetNearestVisiblePlayer( pEntity, mask );
 }

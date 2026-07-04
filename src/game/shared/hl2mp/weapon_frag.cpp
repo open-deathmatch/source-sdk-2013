@@ -343,7 +343,7 @@ void CWeaponFrag::ItemPostFrame( void )
 {
 	if( m_fDrawbackFinished )
 	{
-		CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+		CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() );
 
 		if (pOwner)
 		{
@@ -353,6 +353,7 @@ void CWeaponFrag::ItemPostFrame( void )
 				if( !(pOwner->m_nButtons & IN_ATTACK) )
 				{
 					SendWeaponAnim( ACT_VM_THROW );
+					pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 					m_fDrawbackFinished = false;
 				}
 				break;
@@ -371,6 +372,8 @@ void CWeaponFrag::ItemPostFrame( void )
 						//Send the weapon animation
 						SendWeaponAnim( ACT_VM_HAULBACK );
 					}
+					//Tony; the grenade really should have a secondary anim. but it doesn't on the player.
+					pOwner->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 
 					m_fDrawbackFinished = false;
 				}

@@ -1438,7 +1438,7 @@ bool CWeaponRPG::WeaponShouldBeLowered( void )
 void CWeaponRPG::PrimaryAttack( void )
 {
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
 
 	if (!pPlayer)
 		return;
@@ -1493,7 +1493,7 @@ void CWeaponRPG::PrimaryAttack( void )
 	WeaponSound( SINGLE );
 
 	// player "shoot" animation
-	pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 }
 
 //-----------------------------------------------------------------------------
@@ -2255,7 +2255,7 @@ int CLaserDot::DrawModel( int flags )
 			// Take the eye position and direction
 			vecAttachment = pOwner->EyePosition();
 			
-			QAngle angles = pOwner->GetAnimEyeAngles();
+			QAngle angles = pOwner->EyeAngles();
 			AngleVectors( angles, &vecDir );
 		}
 		

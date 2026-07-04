@@ -183,7 +183,7 @@ bool CWeaponShotgun::StartReload( void )
 	if ( m_bNeedPump )
 		return false;
 
-	CBaseCombatCharacter *pOwner  = GetOwner();
+	CHL2MP_Player *pOwner = ToHL2MPPlayer( GetOwner() );
 	
 	if ( pOwner == NULL )
 		return false;
@@ -201,6 +201,9 @@ bool CWeaponShotgun::StartReload( void )
 		return false;
 
 	SendWeaponAnim( ACT_SHOTGUN_RELOAD_START );
+
+	//Tony; BUG BUG BUG!!! shotgun does one shell at a time!!! -- player model only has a single reload!!! so I'm just going to dispatch the singular for now.
+	pOwner->DoAnimationEvent( PLAYERANIMEVENT_RELOAD );
 
 	// Make shotgun shell visible
 	SetBodygroup(1,0);
@@ -411,7 +414,7 @@ void CWeaponShotgun::DryFire( void )
 void CWeaponShotgun::PrimaryAttack( void )
 {
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
 
 	if (!pPlayer)
 	{
@@ -430,7 +433,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 	m_iClip1 -= 1;
 
 	// player "shoot" animation
-	pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );
 
 	Vector	vecSrc		= pPlayer->Weapon_ShootPosition( );
 	Vector	vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );	
@@ -462,7 +465,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 void CWeaponShotgun::SecondaryAttack( void )
 {
 	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CHL2MP_Player *pPlayer = ToHL2MPPlayer( GetOwner() );
 
 	if (!pPlayer)
 	{
@@ -482,7 +485,7 @@ void CWeaponShotgun::SecondaryAttack( void )
 	m_iClip1 -= 2;	// Shotgun uses same clip for primary and secondary attacks
 
 	// player "shoot" animation
-	pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	pPlayer->DoAnimationEvent( PLAYERANIMEVENT_ATTACK_PRIMARY );	//Tony; shotgun doesn't have a secondary anim, use primary.
 
 	Vector vecSrc	 = pPlayer->Weapon_ShootPosition();
 	Vector vecAiming = pPlayer->GetAutoaimVector( AUTOAIM_10DEGREES );	

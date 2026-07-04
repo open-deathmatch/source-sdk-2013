@@ -298,6 +298,7 @@ void CHL2MPRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 #endif
 }
 
+#ifndef CLIENT_DLL
 #ifdef DEATHMATCH
 //-----------------------------------------------------------------------------
 // Purpose: Whether or not the NPC should drop a health vial
@@ -354,6 +355,7 @@ void CHL2MPRules::NPC_DroppedGrenade( void )
 	m_flLastGrenadeDropTime = gpGlobals->curtime + sk_plr_grenade_drop_time.GetFloat();
 }
 
+#endif
 #endif
 
 void CHL2MPRules::Think( void )
