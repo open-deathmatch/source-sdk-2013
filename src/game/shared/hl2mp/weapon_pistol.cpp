@@ -55,8 +55,6 @@ public:
 	{
 		return bits_CAP_WEAPON_RANGE_ATTACK1;
 	}
-
-	Activity	GetPrimaryAttackActivity( void );
 #endif
 
 	Activity	GetPrimaryAttackActivity( void );
@@ -308,26 +306,6 @@ void CWeaponPistol::ItemPostFrame( void )
 		DryFire();
 	}
 }
-
-#ifndef CLIENT_DLL
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Output : int
-//-----------------------------------------------------------------------------
-Activity CWeaponPistol::GetPrimaryAttackActivity( void )
-{
-	if ( m_nNumShotsFired < 1 )
-		return ACT_VM_PRIMARYATTACK;
-
-	if ( m_nNumShotsFired < 2 )
-		return ACT_VM_RECOIL1;
-
-	if ( m_nNumShotsFired < 3 )
-		return ACT_VM_RECOIL2;
-
-	return ACT_VM_RECOIL3;
-}
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: 
