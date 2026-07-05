@@ -593,7 +593,9 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 #endif
 		}
 
+#ifndef DEATHMATCH
 		return NULL;
+#endif
 	}
 
 	return UTIL_PlayerByIndex( 1 );
