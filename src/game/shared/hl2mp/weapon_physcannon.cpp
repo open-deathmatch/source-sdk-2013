@@ -798,6 +798,15 @@ void CPlayerPickupController::Use( CBaseEntity *pActivator, CBaseEntity *pCaller
 			return;
 		}
 
+#ifdef DEATHMATCH
+		// Stop holding when object doesn't exist anymore
+		if ( !pPhys )
+		{
+			Shutdown();
+			return;
+		}
+#endif
+
 #if STRESS_TEST
 		vphysics_objectstress_t stress;
 		CalculateObjectStress( pPhys, pAttached, &stress );
