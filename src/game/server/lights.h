@@ -13,10 +13,17 @@
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
+#ifndef DEATHMATCH
 class CLight : public CPointEntity
 {
 public:
 	DECLARE_CLASS( CLight, CPointEntity );
+#else
+class CLight : public CServerOnlyPointEntity
+{
+public:
+	DECLARE_CLASS( CLight, CServerOnlyPointEntity );
+#endif
 
 	bool	KeyValue( const char *szKeyName, const char *szValue );
 	void	Spawn( void );
