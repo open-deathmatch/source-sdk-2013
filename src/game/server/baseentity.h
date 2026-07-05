@@ -102,6 +102,12 @@ class IHasAttributes;
 
 typedef CUtlVector< CBaseEntity* > EntityList_t;
 
+#ifdef DEATHMATCH
+extern IPhysicsSurfaceProps *physprops;
+void PhysDisableEntityCollisions( IPhysicsObject *pObject0, IPhysicsObject *pObject1 );
+void PhysEnableEntityCollisions( IPhysicsObject *pObject0, IPhysicsObject *pObject1 );
+#endif
+
 #if defined( HL2_DLL )
 
 // For CLASSIFY
@@ -1339,6 +1345,182 @@ public:
 	{
 		return (int)GetSolid();
 	}
+
+#ifdef DEATHMATCH
+	void ScriptCreatePhysics( int nSolidType, int nSolidFlags, bool asleep ) 
+	{ 
+		VPhysicsInitNormal( (SolidType_t) nSolidType, nSolidFlags, asleep ); 
+	}
+
+	void ScriptDestroyPhysics( void ) 
+	{ 
+		VPhysicsDestroyObject(); 
+	}
+
+	bool ScriptHasPhysics( void )
+	{
+		if ( VPhysicsGetObject() )
+			return true;
+
+		return false;
+	}
+
+	int ScriptGetSurfaceProperty( void ) const
+	{
+		IPhysicsObject * vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{
+			return vPhys->GetMaterialIndex();
+		}
+		else
+		{
+			Log_Warning( LOG_VScript, "Entity (%s) has no VPhysics, make sure it does, or use the CreatePhysics function\n" );
+			return -1;
+		}
+	}
+
+	const char* ScriptGetSurfacePropertyName( int nIndex ) const
+	{
+		if ( !physprops )
+			return "default";
+
+		return physprops->GetPropName( nIndex );
+	}
+
+	void ScriptSetSurfaceProperty( int materialIndex )
+	{
+		IPhysicsObject * vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{
+			vPhys->SetMaterialIndex( materialIndex );
+		}
+		else
+		{
+			Log_Warning( LOG_VScript, "Entity (%s) has no VPhysics, make sure it does, or use the CreatePhysics function\n", GetDebugName() );
+		} 
+	}
+	void ScriptSetSurfacePropertyByName( const char *name )
+	{
+		IPhysicsObject * vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{
+			vPhys->SetMaterialIndex( physprops->GetSurfaceIndex( name ) );
+		}
+		else
+		{
+			Log_Warning( LOG_VScript, "Entity (%s) has no VPhysics, make sure it does, or use the CreatePhysics function\n", GetDebugName() );
+		} 
+	}
+
+	void ScriptToggleCollisionsOn( HSCRIPT pEntity, bool bEnable )
+	{
+		IPhysicsObject * vPhysObj1 = VPhysicsGetObject();
+
+		CBaseEntity *hTarget = ToEnt( pEntity );
+		IPhysicsObject* vPhysObj2 = hTarget->VPhysicsGetObject();
+
+		if ( !vPhysObj2 && !vPhysObj1 )
+			return;
+
+		if ( vPhysObj1 && vPhysObj2 && vPhysObj1 != vPhysObj2 )
+		{
+			if ( bEnable )
+			{
+				PhysEnableEntityCollisions( vPhysObj1, vPhysObj2 );
+			}
+			else
+			{
+				PhysDisableEntityCollisions( vPhysObj1, vPhysObj2 );
+			}
+		}
+	}
+
+	void ScriptSetPhysicsFlag( int PhysFlag )
+	{
+		IPhysicsObject * vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{ 
+			unsigned short flags = vPhys->GetGameFlags();
+			flags |= PhysFlag;
+			vPhys->SetGameFlags( flags );
+		}
+	}
+
+	void ScriptRemovePhysicsFlag( int PhysFlag )
+	{
+		IPhysicsObject * vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{ 
+			unsigned short flags = vPhys->GetGameFlags();
+			flags &= ~PhysFlag;
+			vPhys->SetGameFlags( flags );
+		}
+	}
+
+	bool ScriptHasPhysicsFlag( int PhysFlag ) const
+	{
+		IPhysicsObject *vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{
+			return ( vPhys->GetGameFlags() & PhysFlag ) != 0;
+		}
+		return false;
+	}
+
+	void ScriptSetMass( float flMass ) 
+	{ 
+		IPhysicsObject * vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{
+			Assert(flMass > 0);
+			vPhys->SetMass( flMass );
+		}
+		else
+		{
+			Log_Warning( LOG_VScript, "Entity (%s) has no VPhysics, make sure it does, or use the CreatePhysics function\n", GetDebugName() );
+		} 
+	}
+
+
+	float ScriptGetMass( void ) const
+	{ 
+		IPhysicsObject *vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{
+			return vPhys->GetMass();
+		}
+		else
+		{
+			Log_Warning( LOG_VScript, "Entity (%s) has no VPhysics, make sure it does, or use the CreatePhysics function\n" );
+			return -1;
+		} 
+	}
+
+
+	void ScriptSetBuoyancy( float flBuoyancy )
+	{ 
+		IPhysicsObject *vPhys = VPhysicsGetObject();
+		if ( vPhys )
+		{
+			return vPhys->SetBuoyancyRatio( flBuoyancy );
+		}
+		else
+		{
+			Log_Warning( LOG_VScript, "Entity (%s) has no VPhysics, make sure it does, or use the CreatePhysics function\n", GetDebugName() );
+		} 
+	}
+
+
+	void ScriptSetElasticity( float flElasticity ) 
+	{ 
+		SetElasticity( flElasticity );
+	}
+
+	float ScriptGetElasticity ( void ) const
+	{
+		return m_flElasticity; 
+	}
+#endif
 
 	HSCRIPT ScriptGetModelKeyValues( void );
 
