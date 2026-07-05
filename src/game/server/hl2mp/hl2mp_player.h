@@ -97,9 +97,9 @@ public:
 	void CreateRagdollEntity( void );
 	void GiveAllItems( void );
 	void GiveDefaultItems( void );
-
+#ifndef DEATHMATCH
 	void NoteWeaponFired( void );
-
+#endif
 	void SetAnimation( PLAYER_ANIM playerAnim );
 
 	void SetPlayerModel( void );
@@ -153,8 +153,9 @@ private:
 
 	CNetworkQAngle( m_angEyeAngles );
 	CHL2MPPlayerAnimState *m_PlayerAnimState;
-
+#ifndef DEATHMATCH
 	int m_iLastWeaponFireUsercmd;
+#endif
 	int m_iModelType;
 	CNetworkVar( int, m_iSpawnInterpCounter );
 	CNetworkVar( int, m_iPlayerSoundType );
