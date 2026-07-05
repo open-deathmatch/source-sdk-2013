@@ -245,6 +245,12 @@ void CHL2MPBotManager::MaintainBotQuota()
 			{
 				nHL2MPBotsOnGameTeams++;
 			}
+#ifdef DEATHMATCH
+			else if ( !HL2MPRules()->IsTeamplay() && pPlayer->GetTeamNumber() == TEAM_UNASSIGNED )
+			{
+				nHL2MPBotsOnGameTeams++;
+			}
+#endif
 		}
 		else
 		{
@@ -252,6 +258,12 @@ void CHL2MPBotManager::MaintainBotQuota()
 			{
 				nNonHL2MPBotsOnGameTeams++;
 			}
+#ifdef DEATHMATCH
+			else if ( !HL2MPRules()->IsTeamplay() && pPlayer->GetTeamNumber() == TEAM_UNASSIGNED )
+			{
+				nNonHL2MPBotsOnGameTeams++;
+			}
+#endif
 			else if ( pPlayer->GetTeamNumber() == TEAM_SPECTATOR )
 			{
 				nSpectators++;
@@ -484,7 +496,11 @@ CHL2MPBot* CHL2MPBotManager::GetAvailableBotFromPool()
 		if ( ( pBot->GetFlags() & FL_FAKECLIENT ) == 0 )
 			continue;
 
+#ifndef DEATHMATCH
 		if ( pBot->GetTeamNumber() == TEAM_SPECTATOR || pBot->GetTeamNumber() == TEAM_UNASSIGNED )
+#else
+		if ( pBot->GetTeamNumber() == TEAM_SPECTATOR || ( HL2MPRules()->IsTeamplay() && pBot->GetTeamNumber() == TEAM_UNASSIGNED ) )
+#endif
 		{
 			pBot->ClearAttribute( CHL2MPBot::QUOTA_MANANGED );
 			return pBot;

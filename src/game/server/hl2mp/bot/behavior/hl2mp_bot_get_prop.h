@@ -33,6 +33,9 @@ public:
 private:
 	PathFollower m_path;
 	CHandle< CBaseEntity > m_prop;
+#ifdef DEATHMATCH
+	CountdownTimer m_propAbandonTimer;
+#endif
 
 	bool m_pushedPhyscannon = false;
 };

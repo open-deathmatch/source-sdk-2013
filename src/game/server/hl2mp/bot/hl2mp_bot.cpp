@@ -1409,7 +1409,12 @@ bool CHL2MPBot::EquipRequiredWeapon( void )
 	if ( m_requiredWeaponStack.Count() )
 	{
 		CBaseCombatWeapon *pWeapon = m_requiredWeaponStack.Top().Get();
+#ifndef DEATHMATCH
 		return Weapon_Switch( pWeapon );
+#else
+		Weapon_Switch( pWeapon );
+		return true;
+#endif
 	}
 
 	if ( TheHL2MPBots().IsGravGunOnly() || HasWeaponRestriction( GRAVGUN_ONLY ) )

@@ -8,6 +8,10 @@
 
 extern ConVar falldamage;
 
+#ifdef DEATHMATCH
+ConVar hl2mp_bot_nav_crouch( "hl2mp_bot_nav_crouch", "1", FCVAR_CHEAT );
+#endif
+
 //-----------------------------------------------------------------------------------------
 void CHL2MPBotLocomotion::Update( void )
 {
@@ -23,6 +27,21 @@ void CHL2MPBotLocomotion::Update( void )
 	if ( IsOnGround() )
 	{
 		me->ReleaseCrouchButton();
+	
+#ifdef DEATHMATCH
+		if ( hl2mp_bot_nav_crouch.GetBool() )
+		{
+			const PathFollower *path = me->GetCurrentPath();
+			if ( path && path->GetCurrentGoal() && path->GetCurrentGoal()->area )
+			{
+				if ( path->GetCurrentGoal()->area->GetAttributes() & NAV_MESH_CROUCH )
+				{
+					// moving through a crouch area
+					me->PressCrouchButton( 0.3f );
+				}
+			}
+		}
+#endif
 	}
 	else
 	{
