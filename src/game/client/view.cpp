@@ -1229,8 +1229,6 @@ void CViewRender::Render( vrect_t *rect )
 						pPlayer->GetViewModel( 0 )->GetAttachmentLocal( rootBone, rootOrigin, rootAngles );
 						cameraOrigin -= rootOrigin;
 						cameraAngles -= rootAngles;
-
-						DevMsg( "camera attachment found\n" );
 					}
 					viewEye.angles += cameraAngles * cl_camera_anim_intensity.GetFloat();
 					viewEye.origin += cameraOrigin * cl_camera_anim_intensity.GetFloat();
