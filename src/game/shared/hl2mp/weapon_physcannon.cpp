@@ -2133,11 +2133,7 @@ void CWeaponPhysCannon::UpdateElementPosition( void )
 
 	float flElementPosition = m_ElementParameter.Interp( gpGlobals->curtime );
 
-	if ( ShouldDrawUsingViewModel()
-#ifdef DEATHMATCH
-		 && CurrentViewID() == VIEW_MAIN
-#endif
-		 )
+	if ( ShouldDrawUsingViewModel() )
 	{
 		if ( pOwner != NULL )	
 		{
@@ -2693,11 +2689,7 @@ void CWeaponPhysCannon::StartEffects( void )
 		m_Parameters[i].GetAlpha().SetAbsolute( 64.0f );
 		
 		// Different for different views
-		if ( ShouldDrawUsingViewModel()
-#ifdef DEATHMATCH
-			 && CurrentViewID() == VIEW_MAIN
-#endif
-			 )
+		if ( ShouldDrawUsingViewModel() )
 		{
 			m_Parameters[i].SetAttachment( LookupAttachment( attachNamesGlow[i-PHYSCANNON_GLOW1] ) );
 		}
@@ -2774,11 +2766,7 @@ void CWeaponPhysCannon::DoEffectReady( void )
 #ifdef CLIENT_DLL
 
 	// Special POV case
-	if ( ShouldDrawUsingViewModel()
-#ifdef DEATHMATCH
-		 && CurrentViewID() == VIEW_MAIN
-#endif
-		 )
+	if ( ShouldDrawUsingViewModel() )
 	{
 		//Turn on the center sprite
 		m_Parameters[PHYSCANNON_CORE].GetScale().InitFromCurrent( 14.0f, 0.2f );
@@ -2827,11 +2815,7 @@ void CWeaponPhysCannon::DoEffectHolding( void )
 
 #ifdef CLIENT_DLL
 
-	if ( ShouldDrawUsingViewModel()
-#ifdef DEATHMATCH
-		 &&CurrentViewID() == VIEW_MAIN
-#endif
-		 )
+	if ( ShouldDrawUsingViewModel() )
 	{
 		// Scale up the center sprite
 		m_Parameters[PHYSCANNON_CORE].GetScale().InitFromCurrent( 16.0f, 0.2f );
@@ -3107,11 +3091,7 @@ void CWeaponPhysCannon::GetEffectParameters( EffectType_t effectID, color32 &col
 	QAngle	angles;
 
 	// Format for first-person
-	if ( ShouldDrawUsingViewModel()
-#ifdef DEATHMATCH
-		 && CurrentViewID() == VIEW_MAIN
-#endif
-		 )
+	if ( ShouldDrawUsingViewModel() )
 	{
 		CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 		if ( pOwner != NULL )
