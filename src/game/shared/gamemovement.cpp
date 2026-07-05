@@ -17,6 +17,13 @@
 #ifdef CLIENT_DLL
 #include "prediction.h"
 #endif
+#ifdef DEATHMATCH
+#ifdef GAME_DLL
+#include "hl2mp_player.h"
+#else
+#include "c_hl2mp_player.h"
+#endif
+#endif
 
 #if defined(HL2_DLL) || defined(HL2_CLIENT_DLL)
 	#include "hl_movedata.h"
@@ -2419,7 +2426,11 @@ bool CGameMovement::CheckJumpButton( void )
 	
 	player->PlayStepSound( (Vector &)mv->GetAbsOrigin(), player->m_pSurfaceData, 1.0, true );
 	
+#ifndef DEATHMATCH
 	MoveHelper()->PlayerSetAnimation( PLAYER_JUMP );
+#else
+	ToHL2MPPlayer( player )->DoAnimationEvent( PLAYERANIMEVENT_JUMP );
+#endif
 
 	float flGroundFactor = 1.0f;
 	if (player->m_pSurfaceData)
