@@ -66,6 +66,7 @@ $Project "Server (Open Deathmatch)"
 		$Folder "Open Deathmatch"
 		{
 			$File	"$SRCDIR\game\shared\deathmatch\handviewmodel_shared.cpp"
+			$File	"$SRCDIR\game\shared\deathmatch\weapon_bugbait.cpp"
 		}
 
 		$Folder "NextBot"
@@ -305,7 +306,7 @@ $Project "Server (Open Deathmatch)"
 			$File	"hl2\vehicle_viewcontroller.cpp"
 			$File	"hl2\weapon_alyxgun.h"
 			$File	"hl2\weapon_annabelle.cpp"
-			$File	"hl2\weapon_bugbait.cpp"
+			//$File	"hl2\weapon_bugbait.cpp"
 			$File	"hl2\weapon_crowbar.h"
 			$File	"weapon_cubemap.cpp"
 

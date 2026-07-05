@@ -309,7 +309,9 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_slam" );
 
 	GiveNamedItem( "weapon_physcannon" );
-	
+#ifdef DEATHMATCH
+	GiveNamedItem( "weapon_bugbait" );
+#endif
 }
 
 void CHL2MP_Player::GiveDefaultItems( void )
