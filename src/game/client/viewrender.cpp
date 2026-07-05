@@ -4917,7 +4917,11 @@ void CSkyboxView::DrawInternal( view_id_t iSkyBoxViewID, bool bInvokePreAndPostR
 	}
 
 	render->BeginUpdateLightmaps();
+#ifndef DEATHMATCH
 	BuildWorldRenderLists( true, true, -1 );
+#else
+	BuildWorldRenderLists( true, -1, true );
+#endif
 	BuildRenderableRenderLists( iSkyBoxViewID );
 	render->EndUpdateLightmaps();
 
