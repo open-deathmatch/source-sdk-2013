@@ -2037,6 +2037,14 @@ int	CWeaponRPG::DrawModel( int flags )
 	// Only render these on the transparent pass
 	if ( flags & STUDIO_TRANSPARENCY )
 	{
+#ifdef DEATHMATCH
+		C_BasePlayer *pOwner = ToBasePlayer( GetOwner() );
+		if ( pOwner && pOwner == C_BasePlayer::GetLocalPlayer() &&
+			 pOwner->InPerspectiveView() && pOwner->InFirstPersonView() )
+		{
+			return 1;
+		}
+#endif
 		DrawEffects();
 		return 1;
 	}

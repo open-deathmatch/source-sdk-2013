@@ -89,12 +89,13 @@ static inline bool ShouldDrawLocalPlayerViewModel( void )
 #elif DEATHMATCH
 	// We shouldn't draw the viewmodel externally.
 	C_BasePlayer *localplayer = C_BasePlayer::GetLocalPlayer();
-	if ( localplayer )
+	if (localplayer)
 	{
-		if ( localplayer->DrawingPlayerModelExternally() && localplayer->InFirstPersonView() )
+		if (localplayer->m_bDrawPlayerModelExternally)
 		{
 			// If this isn't the main view, draw the weapon.
-			if ( !localplayer->InPerspectiveView() )
+			view_id_t viewID = CurrentViewID();
+			if (viewID != VIEW_MAIN && viewID != VIEW_INTRO_CAMERA)
 				return false;
 		}
 
@@ -224,8 +225,16 @@ ShadowType_t C_BaseCombatWeapon::ShadowCastType()
 	if (!IsBeingCarried())
 		return SHADOWS_RENDER_TO_TEXTURE;
 
-	if (IsCarriedByLocalPlayer() && !C_BasePlayer::ShouldDrawLocalPlayer())
-		return SHADOWS_NONE;
+	if ( IsCarriedByLocalPlayer() )
+	{
+		if ( !C_BasePlayer::ShouldDrawLocalPlayer() )
+			return SHADOWS_NONE;
+
+#ifdef DEATHMATCH
+		if ( C_BasePlayer::GetLocalPlayer() && C_BasePlayer::GetLocalPlayer()->ShadowCastType() == SHADOWS_NONE )
+			return SHADOWS_NONE;
+#endif
+	}
 
 	return SHADOWS_RENDER_TO_TEXTURE;
 }
@@ -518,7 +527,8 @@ int C_BaseCombatWeapon::DrawModel( int flags )
 		if (GetOwner() == localplayer && localplayer->DrawingPlayerModelExternally())
 		{
 			// If this isn't the main view, draw the weapon.
-			if ( (!localplayer->InPerspectiveView() || !localplayer->InFirstPersonView()) && (CurrentViewID() != VIEW_SHADOW_DEPTH_TEXTURE || !localplayer->IsEffectActive(EF_DIMLIGHT)))
+			view_id_t viewID = CurrentViewID();
+			if ( ( !localplayer->InFirstPersonView() || ( viewID != VIEW_MAIN && viewID != VIEW_INTRO_CAMERA ) ) && ( viewID != VIEW_SHADOW_DEPTH_TEXTURE || !localplayer->IsEffectActive( EF_DIMLIGHT ) ) )
 			{
 				// TODO: Is this inefficient?
 				int nModelIndex = GetModelIndex();
@@ -536,10 +546,6 @@ int C_BaseCombatWeapon::DrawModel( int flags )
 				}
 
 				return iDraw;
-			}
-			else
-			{
-				return 0;
 			}
 		}
 #endif
@@ -645,3 +651,21 @@ void C_BaseCombatWeapon::GetToolRecordingState( KeyValues *msg )
 		SetModelIndex( nModelIndex );
 	}
 }
+
+#ifdef DEATHMATCH
+//-----------------------------------------------------------------------------
+// Purpose:	
+//-----------------------------------------------------------------------------
+bool C_BaseCombatWeapon::DispatchMuzzleEffect( const char *options, bool isFirstPerson )
+{
+	// Don't show muzzle flashes in first-person
+	C_BasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	if ( pPlayer )
+	{
+		if ( pPlayer->DrawingPlayerModelExternally() && pPlayer->InFirstPersonView() )
+			return false;
+	}
+
+	return BaseClass::DispatchMuzzleEffect( options, isFirstPerson );
+}
+#endif

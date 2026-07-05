@@ -26,6 +26,10 @@
 	#include "fx_quad.h"
 	#include "fx.h"
 
+	#ifdef DEATHMATCH
+		#include "input.h"
+	#endif
+
 	extern void DrawHalo( IMaterial* pMaterial, const Vector &source, float scale, float const *color, float flHDRColorScale );
 	extern void FormatViewModelAttachment( Vector &vOrigin, bool bInverse );
 
@@ -44,9 +48,9 @@ extern ConVar metropolice_move_and_melee;
 #define	STUNSTICK_RANGE				75.0f
 #define	STUNSTICK_REFIRE			0.8f
 #define	STUNSTICK_BEAM_MATERIAL		"sprites/lgtning.vmt"
-#define STUNSTICK_GLOW_MATERIAL		"sprites/light_glow02_add"
-#define STUNSTICK_GLOW_MATERIAL2	"effects/blueflare1"
-#define STUNSTICK_GLOW_MATERIAL_NOZ	"sprites/light_glow02_add_noz"
+#define STUNSTICK_GLOW_MATERIAL		"sprites/light_glow02_add.vmt"
+#define STUNSTICK_GLOW_MATERIAL2	"effects/blueflare1.vmt"
+#define STUNSTICK_GLOW_MATERIAL_NOZ	"sprites/light_glow02_add_noz.vmt"
 
 #ifdef CLIENT_DLL
 #define CWeaponStunStick C_WeaponStunStick
@@ -210,9 +214,9 @@ void CWeaponStunStick::Precache()
 	PrecacheScriptSound( "Weapon_StunStick.Deactivate" );
 
 	PrecacheModel( STUNSTICK_BEAM_MATERIAL );
-	PrecacheModel( "sprites/light_glow02_add.vmt" );
-	PrecacheModel( "effects/blueflare1.vmt" );
-	PrecacheModel( "sprites/light_glow02_add_noz.vmt" );
+	PrecacheModel( STUNSTICK_GLOW_MATERIAL );
+	PrecacheModel( STUNSTICK_GLOW_MATERIAL2 );
+	PrecacheModel( STUNSTICK_GLOW_MATERIAL_NOZ );
 }
 
 //-----------------------------------------------------------------------------
@@ -622,7 +626,11 @@ void C_WeaponStunStick::ClientThink( void )
 	if ( IsEffectActive( EF_NODRAW ) )
 		return;
 
+#ifndef DEATHMATCH
 	if ( ShouldDrawUsingViewModel() )
+#else
+	if ( IsCarriedByLocalPlayer() && !::input->CAM_IsThirdPerson() )
+#endif
 	{
 		// Update our effects
 		if ( gpGlobals->frametime != 0.0f && ( random->RandomInt( 0, 3 ) == 0 ) )
@@ -678,7 +686,11 @@ void C_WeaponStunStick::ClientThink( void )
 void C_WeaponStunStick::OnDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnDataChanged( updateType );
+#ifdef DEATHMATCH
+	if ( updateType == DATA_UPDATE_DATATABLE_CHANGED )
+#else
 	if ( updateType == DATA_UPDATE_CREATED )
+#endif
 	{
 		SetNextClientThink( CLIENT_THINK_ALWAYS );
 		SetupAttachmentPoints();
@@ -701,7 +713,11 @@ bool C_WeaponStunStick::InSwing( void )
 	int activity = GetActivity();
 
 	// FIXME: This is needed until the actual animation works
+#ifndef DEATHMATCH
 	if ( ShouldDrawUsingViewModel() == false )
+#else
+	if ( IsCarriedByLocalPlayer() == false && ::input->CAM_IsThirdPerson() )
+#endif
 		return true;
 
 	// These are the swing activities this weapon can play
@@ -871,7 +887,11 @@ void C_WeaponStunStick::DrawFirstPersonEffects( void )
 //-----------------------------------------------------------------------------
 void C_WeaponStunStick::DrawEffects( void )
 {
+#ifndef DEATHMATCH
 	if ( ShouldDrawUsingViewModel() )
+#else
+	if ( IsCarriedByLocalPlayer() && !::input->CAM_IsThirdPerson() )
+#endif
 	{
 		DrawFirstPersonEffects();
 	}
