@@ -83,6 +83,10 @@ extern bool g_bRenderingScreenshot;
 extern ConVar sensitivity;
 #endif
 
+#ifdef DEATHMATCH
+ConVar cl_camera_anim_intensity( "cl_camera_anim_intensity", "1.0", FCVAR_ARCHIVE, "Intensity of cambone animations" );
+#endif
+
 ConVar zoom_sensitivity_ratio( "zoom_sensitivity_ratio", "1.0", FCVAR_ARCHIVE, "Additional mouse sensitivity scale factor applied when FOV is zoomed in." );
 
 CViewRender g_DefaultViewRender;
@@ -1200,6 +1204,40 @@ void CViewRender::Render( vrect_t *rect )
 			// we should use the monitor view from the left eye for both eyes
 			flags |= RENDERVIEW_SUPPRESSMONITORRENDERING;
 		}
+
+#ifdef DEATHMATCH
+		//--------------------------------
+		// Handle camera anims
+		//--------------------------------
+
+		if ( !UseVR() && pPlayer && cl_camera_anim_intensity.GetFloat() > 0 )
+		{
+			if ( pPlayer->GetViewModel( 0 ) )
+			{
+				int attachment = pPlayer->GetViewModel( 0 )->LookupAttachment( "camera" );
+				if ( attachment != -1 )
+				{
+					int rootBone = pPlayer->GetViewModel( 0 )->LookupAttachment( "camera_root" );
+					Vector cameraOrigin = Vector( 0, 0, 0 );
+					QAngle cameraAngles = QAngle( 0, 0, 0 );
+					Vector rootOrigin = Vector( 0, 0, 0 );
+					QAngle rootAngles = QAngle( 0, 0, 0 );
+
+					pPlayer->GetViewModel( 0 )->GetAttachmentLocal( attachment, cameraOrigin, cameraAngles );
+					if ( rootBone != -1 )
+					{
+						pPlayer->GetViewModel( 0 )->GetAttachmentLocal( rootBone, rootOrigin, rootAngles );
+						cameraOrigin -= rootOrigin;
+						cameraAngles -= rootAngles;
+
+						DevMsg( "camera attachment found\n" );
+					}
+					viewEye.angles += cameraAngles * cl_camera_anim_intensity.GetFloat();
+					viewEye.origin += cameraOrigin * cl_camera_anim_intensity.GetFloat();
+				}
+			}
+		}
+#endif
 
 	    RenderView( viewEye, nClearFlags, flags );
 
