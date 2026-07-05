@@ -16,9 +16,6 @@
 	#include "model_types.h"
 	#include "clienteffectprecachesystem.h"
 	#include "fx_interpvalue.h"
-	#ifdef DEATHMATCH
-		#include "viewrender.h"
-	#endif
 #else
 	#include "hl2mp_player.h"
 	#include "soundent.h"
@@ -3194,10 +3191,6 @@ int CWeaponPhysCannon::DrawModel( int flags )
 //-----------------------------------------------------------------------------
 void CWeaponPhysCannon::ViewModelDrawn( C_BaseViewModel *pBaseViewModel )
 {
-#ifdef DEATHMATCH
-	if ( CurrentViewID() != VIEW_MAIN )
-		return;
-#endif
 	// Render our effects
 	DrawEffects();
 
