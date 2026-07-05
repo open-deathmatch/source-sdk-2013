@@ -281,6 +281,7 @@ Vector CHL2MPBotMainAction::SelectTargetPoint( const INextBot *meBot, const CBas
 						float flForceMax = physcannon_maxforce.GetFloat();
 						float flForce = flForceMax;
 
+#ifndef DEATHMATCH
 						float mass = pHeldEntity->VPhysicsGetObject()->GetMass();
 						if ( mass > 100 )
 						{
@@ -288,6 +289,19 @@ Vector CHL2MPBotMainAction::SelectTargetPoint( const INextBot *meBot, const CBas
 							float flForceMin = physcannon_minforce.GetFloat();
 							flForce = SimpleSplineRemapVal( mass, 100, 600, flForceMax, flForceMin );
 						}
+#else
+						IPhysicsObject *pPhysObj = pHeldEntity->VPhysicsGetObject();
+						if ( pPhysObj )
+						{
+							float mass = pPhysObj->GetMass();
+							if ( mass > 100.0f )
+							{
+								mass = MIN( mass, 1000.0f );
+								float flForceMin = physcannon_minforce.GetFloat();
+								flForce = SimpleSplineRemapVal( mass, 100.0f, 600.0f, flForceMax, flForceMin );
+							}
+						}
+#endif
 
 						const float veryCloseRange = 150.0f;
 						if ( rangeBetween > veryCloseRange )
