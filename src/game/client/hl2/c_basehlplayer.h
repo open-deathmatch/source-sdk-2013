@@ -52,6 +52,13 @@ public:
 
 	bool				IsWeaponLowered( void ) { return m_HL2Local.m_bWeaponLowered; }
 
+#ifdef DEATHMATCH
+	bool				IsHoldingAnyEntity( void )
+	{
+		return m_HL2Local.m_bHoldingObject;
+	}
+#endif
+
 	virtual void	HandleSpeedChanges( CMoveData *mv ){}
 	virtual void	ReduceTimers( CMoveData *mv ){}
 

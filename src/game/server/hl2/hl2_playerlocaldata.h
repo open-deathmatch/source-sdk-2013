@@ -43,6 +43,9 @@ public:
 	CNetworkVar( bool,	m_bDisplayReticle );
 	CNetworkVar( bool,	m_bStickyAutoAim );
 	CNetworkVar( bool,	m_bAutoAimTarget );
+#ifdef DEATHMATCH
+	CNetworkVar( bool, m_bHoldingObject );
+#endif
 #ifdef HL2_EPISODIC
 	CNetworkVar( float, m_flFlashBattery );
 	CNetworkVar( Vector, m_vecLocatorOrigin );

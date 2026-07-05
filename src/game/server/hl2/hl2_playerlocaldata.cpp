@@ -26,6 +26,9 @@ BEGIN_SEND_TABLE_NOBASE( CHL2PlayerLocalData, DT_HL2Local )
 	SendPropInt( SENDINFO(m_bitsActiveDevices), MAX_SUIT_DEVICES, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO(m_iSquadMemberCount) ),
 	SendPropInt( SENDINFO(m_iSquadMedicCount) ),
+#ifdef DEATHMATCH
+	SendPropBool( SENDINFO( m_bHoldingObject ) ),
+#endif
 	SendPropBool( SENDINFO(m_fSquadInFollowMode) ),
 	SendPropBool( SENDINFO(m_bWeaponLowered) ),
 	SendPropEHandle( SENDINFO(m_hAutoAimTarget) ),
@@ -75,6 +78,9 @@ CHL2PlayerLocalData::CHL2PlayerLocalData()
 	m_hLadder.Set(NULL);
 	m_vecAutoAimPoint.GetForModify().Init();
 	m_bDisplayReticle = false;
+#ifdef DEATHMATCH
+	m_bHoldingObject = false;
+#endif
 #ifdef HL2_EPISODIC
 	m_flFlashBattery = 0.0f;
 #endif

@@ -53,6 +53,9 @@ public:
 	// All predicted weapons need to implement and return true
 	virtual bool	IsPredicted() const;
 
+#ifdef DEATHMATCH
+	virtual void ItemPostFrame( void );
+#endif
 	CBasePlayer* GetPlayerOwner() const;
 	CHL2MP_Player* GetHL2MPPlayerOwner() const;
 

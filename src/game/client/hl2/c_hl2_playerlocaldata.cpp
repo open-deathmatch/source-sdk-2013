@@ -22,6 +22,9 @@ BEGIN_RECV_TABLE_NOBASE( C_HL2PlayerLocalData, DT_HL2Local )
 	RecvPropInt( RECVINFO(m_iSquadMedicCount) ),
 	RecvPropBool( RECVINFO(m_fSquadInFollowMode) ),
 	RecvPropBool( RECVINFO(m_bWeaponLowered) ),
+#ifdef DEATHMATCH
+	RecvPropBool( RECVINFO( m_bHoldingObject ) ),
+#endif
 	RecvPropEHandle( RECVINFO(m_hAutoAimTarget) ),
 	RecvPropVector( RECVINFO(m_vecAutoAimPoint) ),
 	RecvPropEHandle( RECVINFO(m_hLadder) ),
@@ -59,6 +62,9 @@ C_HL2PlayerLocalData::C_HL2PlayerLocalData()
 	m_fSquadInFollowMode = false;
 	m_bWeaponLowered = false;
 	m_hLadder = NULL;
+#ifdef DEATHMATCH
+	m_bHoldingObject = false;
+#endif
 #ifdef HL2_EPISODIC
 	m_flFlashBattery = 0.0f;
 	m_vecLocatorOrigin = vec3_origin;

@@ -137,6 +137,17 @@ void CWeaponHL2MPBase::WeaponSound( WeaponSound_t sound_type, float soundtime /*
 #endif
 }
 
+#ifdef DEATHMATCH
+void CWeaponHL2MPBase::ItemPostFrame( void )
+{
+#ifdef CLIENT_DLL
+	// prevent phantom weapon fire occuring on the client when throwing a prop
+	if ( GetHL2MPPlayerOwner() && GetHL2MPPlayerOwner()->IsHoldingAnyEntity() )
+		return;
+#endif
+	BaseClass::ItemPostFrame();
+}
+#endif
 
 CBasePlayer* CWeaponHL2MPBase::GetPlayerOwner() const
 {

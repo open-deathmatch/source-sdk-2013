@@ -700,6 +700,9 @@ void CPlayerPickupController::Init( CBasePlayer *pPlayer, CBaseEntity *pObject )
 	if ( pOwner )
 	{
 		pOwner->EnableSprint( false );
+#ifdef DEATHMATCH
+		pOwner->OnPickupObject();
+#endif
 	}
 
 	// If the target is debris, convert it to non-debris
@@ -753,6 +756,9 @@ void CPlayerPickupController::Shutdown( bool bThrown )
 		if ( pOwner )
 		{
 			pOwner->EnableSprint( true );
+#ifdef DEATHMATCH
+			pOwner->OnDropObject();
+#endif
 		}
 
 		m_pPlayer->SetUseEntity( NULL );

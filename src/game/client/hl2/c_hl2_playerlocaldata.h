@@ -39,6 +39,9 @@ public:
 	int		m_iSquadMedicCount;
 	bool	m_fSquadInFollowMode;
 	bool	m_bWeaponLowered;
+#ifdef DEATHMATCH
+	bool	m_bHoldingObject;
+#endif
 	EHANDLE m_hAutoAimTarget;
 	Vector	m_vecAutoAimPoint;
 	bool	m_bDisplayReticle;
