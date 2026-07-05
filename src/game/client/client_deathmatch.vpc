@@ -38,6 +38,7 @@ $Project "Client (Open Deathmatch)"
 		{
 			$File	"$SRCDIR\game\shared\deathmatch\handviewmodel_shared.cpp"
 			$File	"$SRCDIR\game\shared\deathmatch\weapon_bugbait.cpp"
+			$File	"deathmatch\fx_cs_weaponfx.cpp"
 		}
 
 		$Folder	"NextBot"
