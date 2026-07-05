@@ -582,6 +582,7 @@ CBasePlayer	*UTIL_PlayerByIndex( int playerIndex )
 // 
 CBasePlayer *UTIL_GetLocalPlayer( void )
 {
+#ifndef DEATHMATCH
 	if ( gpGlobals->maxClients > 1 )
 	{
 		if ( developer.GetBool() )
@@ -593,12 +594,31 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 #endif
 		}
 
-#ifndef DEATHMATCH
 		return NULL;
-#endif
 	}
 
 	return UTIL_PlayerByIndex( 1 );
+#else
+	// try to return the listenserver-host
+	CBasePlayer *pHost = UTIL_GetListenServerHost();
+	if ( pHost )
+	{
+		return pHost;
+	}
+
+	// try to return literally any other client on the server
+	for ( int i = 1; i < gpGlobals->maxClients; i++ )
+	{
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
+
+		if ( pPlayer )
+		{
+			return pPlayer;
+		}
+	}
+
+	return NULL;
+#endif
 }
 
 #ifdef DEATHMATCH

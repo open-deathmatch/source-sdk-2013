@@ -4817,7 +4817,11 @@ void CAI_BaseNPC::RunAI( void )
 
 		vecPoint = EyePosition() + Vector( 0, 0, 12 );
 
+#ifdef DEATHMATCH
+		UTIL_GetNearestPlayer( GetAbsOrigin() )->GetVectors( NULL, &right, NULL );
+#else
 		UTIL_GetLocalPlayer()->GetVectors( NULL, &right, NULL );
+#endif
 
 		NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 64 ), 255, 0, 0, false , 0.1 );
 		NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 32 ) + right * 32, 255, 0, 0, false , 0.1 );
@@ -11916,7 +11920,11 @@ bool CAI_BaseNPC::CineCleanup()
 			{
 				SetLocalOrigin( origin );
 
+#ifndef DEATHMATCH
 				int drop = UTIL_DropToFloor( this, MASK_NPCSOLID, UTIL_GetLocalPlayer() );
+#else
+				int drop = UTIL_DropToFloor( this, MASK_NPCSOLID, UTIL_GetNearestPlayer( GetAbsOrigin() ) );
+#endif
 
 				// Origin in solid?  Set to org at the end of the sequence
 				if ( ( drop < 0 ) || sv_test_scripted_sequences.GetBool() )
@@ -12527,6 +12535,7 @@ bool CAI_BaseNPC::IsPlayerAlly( CBasePlayer *pPlayer )
 { 
 	if ( pPlayer == NULL )
 	{
+#ifndef DEATHMATCH
 		// in multiplayer mode we need a valid pPlayer 
 		// or override this virtual function
 		if ( !AI_IsSinglePlayer() )
@@ -12534,6 +12543,9 @@ bool CAI_BaseNPC::IsPlayerAlly( CBasePlayer *pPlayer )
 
 		// NULL means single player mode
 		pPlayer = UTIL_GetLocalPlayer();
+#else
+		pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
+#endif
 	}
 
 	return ( !pPlayer || IRelationType( pPlayer ) == D_LI ); 
