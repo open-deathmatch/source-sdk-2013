@@ -16,6 +16,9 @@
 	#include "model_types.h"
 	#include "clienteffectprecachesystem.h"
 	#include "fx_interpvalue.h"
+	#ifdef DEATHMATCH
+		#include "viewrender.h"
+	#endif
 #else
 	#include "hl2mp_player.h"
 	#include "soundent.h"
@@ -2130,7 +2133,11 @@ void CWeaponPhysCannon::UpdateElementPosition( void )
 
 	float flElementPosition = m_ElementParameter.Interp( gpGlobals->curtime );
 
-	if ( ShouldDrawUsingViewModel() )
+	if ( ShouldDrawUsingViewModel()
+#ifdef DEATHMATCH
+		 && CurrentViewID() == VIEW_MAIN
+#endif
+		 )
 	{
 		if ( pOwner != NULL )	
 		{
@@ -2686,7 +2693,11 @@ void CWeaponPhysCannon::StartEffects( void )
 		m_Parameters[i].GetAlpha().SetAbsolute( 64.0f );
 		
 		// Different for different views
-		if ( ShouldDrawUsingViewModel() )
+		if ( ShouldDrawUsingViewModel()
+#ifdef DEATHMATCH
+			 && CurrentViewID() == VIEW_MAIN
+#endif
+			 )
 		{
 			m_Parameters[i].SetAttachment( LookupAttachment( attachNamesGlow[i-PHYSCANNON_GLOW1] ) );
 		}
@@ -2763,7 +2774,11 @@ void CWeaponPhysCannon::DoEffectReady( void )
 #ifdef CLIENT_DLL
 
 	// Special POV case
-	if ( ShouldDrawUsingViewModel() )
+	if ( ShouldDrawUsingViewModel()
+#ifdef DEATHMATCH
+		 && CurrentViewID() == VIEW_MAIN
+#endif
+		 )
 	{
 		//Turn on the center sprite
 		m_Parameters[PHYSCANNON_CORE].GetScale().InitFromCurrent( 14.0f, 0.2f );
@@ -2812,7 +2827,11 @@ void CWeaponPhysCannon::DoEffectHolding( void )
 
 #ifdef CLIENT_DLL
 
-	if ( ShouldDrawUsingViewModel() )
+	if ( ShouldDrawUsingViewModel()
+#ifdef DEATHMATCH
+		 &&CurrentViewID() == VIEW_MAIN
+#endif
+		 )
 	{
 		// Scale up the center sprite
 		m_Parameters[PHYSCANNON_CORE].GetScale().InitFromCurrent( 16.0f, 0.2f );
@@ -3088,10 +3107,13 @@ void CWeaponPhysCannon::GetEffectParameters( EffectType_t effectID, color32 &col
 	QAngle	angles;
 
 	// Format for first-person
-	if ( ShouldDrawUsingViewModel() )
+	if ( ShouldDrawUsingViewModel()
+#ifdef DEATHMATCH
+		 && CurrentViewID() == VIEW_MAIN
+#endif
+		 )
 	{
 		CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-		
 		if ( pOwner != NULL )
 		{
 			pOwner->GetViewModel()->GetAttachment( attachment, vecAttachment, angles );
@@ -3171,6 +3193,14 @@ int CWeaponPhysCannon::DrawModel( int flags )
 	// Only render these on the transparent pass
 	if ( flags & STUDIO_TRANSPARENCY )
 	{
+#ifdef DEATHMATCH
+		C_BasePlayer *pOwner = ToBasePlayer( GetOwner() );
+		if ( pOwner && pOwner == C_BasePlayer::GetLocalPlayer() &&
+			 pOwner->InPerspectiveView() && pOwner->InFirstPersonView() )
+		{
+			return 1;
+		}
+#endif
 		DrawEffects();
 		return 1;
 	}
@@ -3184,6 +3214,10 @@ int CWeaponPhysCannon::DrawModel( int flags )
 //-----------------------------------------------------------------------------
 void CWeaponPhysCannon::ViewModelDrawn( C_BaseViewModel *pBaseViewModel )
 {
+#ifdef DEATHMATCH
+	if ( CurrentViewID() != VIEW_MAIN )
+		return;
+#endif
 	// Render our effects
 	DrawEffects();
 
