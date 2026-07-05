@@ -49,7 +49,9 @@ Color g_ColorGreen( 153, 255, 153, 255 );
 Color g_ColorDarkGreen( 64, 255, 64, 255 );
 Color g_ColorYellow( 255, 178, 0, 255 );
 Color g_ColorGrey( 204, 204, 204, 255 );
-
+#ifdef DEATHMATCH
+Color g_ColorWhite( 255, 255, 255, 255 );
+#endif
 
 // removes all color markup characters, so Msg can deal with the string properly
 // returns a pointer to str
@@ -1379,7 +1381,11 @@ void CBaseHudChat::SetCustomColor( const char *pszColorName )
 //-----------------------------------------------------------------------------
 Color CBaseHudChat::GetDefaultTextColor( void )
 {
+#ifdef DEATHMATCH
+	return g_ColorWhite;
+#else
 	return g_ColorYellow;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1394,7 +1400,11 @@ Color CBaseHudChat::GetClientColor( int clientIndex )
 		return g_ColorGrey;
 	}
 
+#ifdef DEATHMATCH
+	return g_ColorWhite;
+#else
 	return g_ColorYellow;
+#endif
 }
 
 //-----------------------------------------------------------------------------
