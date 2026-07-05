@@ -273,6 +273,10 @@ BEGIN_DATADESC( CBasePlayer )
 	DEFINE_FIELD( m_afButtonDisabled, FIELD_INTEGER ),
 	DEFINE_FIELD( m_afButtonForced,	FIELD_INTEGER ),
 
+#ifdef DEATHMATCH
+	DEFINE_FIELD( m_bDrawPlayerModelExternally, FIELD_BOOLEAN ),
+#endif
+
 	DEFINE_FIELD( m_iFOV,		FIELD_INTEGER ),
 	DEFINE_FIELD( m_iFOVStart,	FIELD_INTEGER ),
 	DEFINE_FIELD( m_flFOVTime,	FIELD_TIME ),
@@ -8191,6 +8195,10 @@ void CMovementSpeedMod::InputSpeedMod(inputdata_t &data)
 		SendPropFloat		( SENDINFO( m_flConstraintRadius ), 0, SPROP_NOSCALE ),
 		SendPropFloat		( SENDINFO( m_flConstraintWidth ), 0, SPROP_NOSCALE ),
 		SendPropFloat		( SENDINFO( m_flConstraintSpeedFactor ), 0, SPROP_NOSCALE ),
+
+#ifdef DEATHMATCH
+		SendPropBool( SENDINFO( m_bDrawPlayerModelExternally ) ),
+#endif // DEATHMATCH
 
 		SendPropFloat		( SENDINFO( m_flDeathTime ), 0, SPROP_NOSCALE ),
 

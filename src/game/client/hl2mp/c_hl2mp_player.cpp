@@ -337,6 +337,11 @@ int C_HL2MP_Player::DrawModel( int flags )
 	if ( !m_bReadyToDraw )
 		return 0;
 
+#ifdef DEATHMATCH
+	if ( InPerspectiveView() )
+		UpdateLookAt();
+#endif
+
     return BaseClass::DrawModel(flags);
 }
 

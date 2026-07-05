@@ -17,6 +17,10 @@
 #include "toolframework/itoolframework.h"
 #include "toolframework_client.h"
 
+#ifdef DEATHMATCH
+#include "viewrender.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -82,6 +86,23 @@ static inline bool ShouldDrawLocalPlayerViewModel( void )
 {
 #if defined( PORTAL )
 	return false;
+#elif DEATHMATCH
+	// We shouldn't draw the viewmodel externally.
+	C_BasePlayer *localplayer = C_BasePlayer::GetLocalPlayer();
+	if ( localplayer )
+	{
+		if ( localplayer->DrawingPlayerModelExternally() && localplayer->InFirstPersonView() )
+		{
+			// If this isn't the main view, draw the weapon.
+			if ( !localplayer->InPerspectiveView() )
+				return false;
+		}
+
+		// Since we already have the local player, check its own ShouldDrawThisPlayer() to avoid extra checks
+		return !localplayer->ShouldDrawThisPlayer();
+	}
+	else
+		return false;
 #else
 	return !C_BasePlayer::ShouldDrawLocalPlayer();
 #endif
@@ -431,6 +452,12 @@ bool C_BaseCombatWeapon::ShouldDraw( void )
 			return false;
 		}
 
+#ifdef DEATHMATCH
+		// We're drawing this in non-main views, handle it in DrawModel()
+		if ( pLocalPlayer->DrawingPlayerModelExternally() )
+			return true;
+#endif
+
 		// 3rd person mode?
 		if ( !ShouldDrawLocalPlayerViewModel() )
 			return true;
@@ -481,8 +508,43 @@ int C_BaseCombatWeapon::DrawModel( int flags )
 	// check if local player chases owner of this weapon in first person
 	C_BasePlayer *localplayer = C_BasePlayer::GetLocalPlayer();
 
+#ifdef DEATHMATCH
+	if ( localplayer )
+#else
 	if ( localplayer && localplayer->IsObserver() && GetOwner() )
+#endif
 	{
+#ifdef DEATHMATCH
+		if (GetOwner() == localplayer && localplayer->DrawingPlayerModelExternally())
+		{
+			// If this isn't the main view, draw the weapon.
+			if ( (!localplayer->InPerspectiveView() || !localplayer->InFirstPersonView()) && (CurrentViewID() != VIEW_SHADOW_DEPTH_TEXTURE || !localplayer->IsEffectActive(EF_DIMLIGHT)))
+			{
+				// TODO: Is this inefficient?
+				int nModelIndex = GetModelIndex();
+				int nWorldModelIndex = GetWorldModelIndex();
+				if (nModelIndex != nWorldModelIndex)
+				{
+					SetModelIndex(nWorldModelIndex);
+				}
+
+				int iDraw = BaseClass::DrawModel(flags);
+
+				if (nModelIndex != nWorldModelIndex)
+				{
+					SetModelIndex(nModelIndex);
+				}
+
+				return iDraw;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+#endif
+
+#ifndef DEATHMATCH
 		// don't draw weapon if chasing this guy as spectator
 		// we don't check that in ShouldDraw() since this may change
 		// without notification 
@@ -490,6 +552,18 @@ int C_BaseCombatWeapon::DrawModel( int flags )
 		if ( localplayer->GetObserverMode() == OBS_MODE_IN_EYE &&
 			 localplayer->GetObserverTarget() == GetOwner() ) 
 			return false;
+#else
+		if ( localplayer->IsObserver() && GetOwner() )
+		{
+			// don't draw weapon if chasing this guy as spectator
+			// we don't check that in ShouldDraw() since this may change
+			// without notification 
+
+			if ( localplayer->GetObserverMode() == OBS_MODE_IN_EYE &&
+				 localplayer->GetObserverTarget() == GetOwner() )
+				return false;
+		}
+#endif
 	}
 
 	return BaseClass::DrawModel( flags );
