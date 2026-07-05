@@ -110,6 +110,30 @@ const char *GetRandomBotName( void )
 	static const char *nameList[] =
 	{
 		"Bot Name",
+#ifdef DEATHMATCH
+		"Joshua",
+		"Mike",
+		"Nelson",
+		"Homer",
+		"Caleb",
+		"Amar",
+		"Ada",
+		"Jodie",
+		"Billie",
+		"File Not Found",
+		"HAAAAX!!!",
+		"Valve Pls Fix",
+		"Tim",
+		"Gordon",
+		"Metrocop",
+		"Combine",
+		"Pick Up That Can",
+		"Breen",
+		"Alyx",
+		"Mossman",
+		"Headcrab",
+		"Nova_Prospekt",
+#endif
 		NULL
 	};
 	static int nameCount = 0;
