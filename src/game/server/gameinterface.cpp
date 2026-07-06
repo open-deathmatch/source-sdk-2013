@@ -1046,7 +1046,30 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 		// Clear out entity references, and parse the entities into it.
 		g_MapEntityRefs.Purge();
 		CMapLoadEntityFilter filter;
+#ifdef DEATHMATCH
+		char szMapAddPath [ MAX_PATH ];
+		Q_snprintf( szMapAddPath, sizeof( szMapAddPath ), "maps/%s_mapadd.txt", STRING( gpGlobals->mapname ) );
+
+		if ( filesystem->FileExists( szMapAddPath, "MOD" ) )
+		{
+			CUtlBuffer buf;
+			if ( filesystem->ReadFile( szMapAddPath, "MOD", buf ) )
+			{
+				int newLen = Q_strlen( pMapEntities ) + buf.TellPut() + 1;
+				char *pCombined = new char [ newLen ];
+				Q_strncpy( pCombined, pMapEntities, newLen );
+				Q_strncat( pCombined, ( const char * ) buf.Base(), newLen );
+
+				MapEntity_ParseAllEntities( pCombined, &filter );
+			}
+		}
+		else
+		{
+#endif
 		MapEntity_ParseAllEntities( pMapEntities, &filter );
+#ifdef DEATHMATCH
+		}
+#endif
 
 		g_pServerBenchmark->StartBenchmark();
 
