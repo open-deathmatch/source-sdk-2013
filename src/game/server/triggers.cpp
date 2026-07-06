@@ -3075,6 +3075,13 @@ void CTriggerCamera::Enable( void )
 #endif
 	}
 
+#ifdef DEATHMATCH
+	if ( !m_hPlayer )
+	{
+		m_hPlayer = UTIL_GetListenServerHost();
+	}
+#endif
+
 	if ( !m_hPlayer )
 	{
 		DispatchUpdateTransmitState();
@@ -3264,7 +3271,12 @@ void CTriggerCamera::Disable( void )
 			((CBasePlayer*)m_hPlayer.Get())->GetActiveWeapon()->RemoveEffects( EF_NODRAW );
 		}
 		//return the player to previous takedamage state
+#ifndef DEATHMATCH
 		m_hPlayer->m_takedamage = m_nOldTakeDamage;
+#else
+		if ( m_nOldTakeDamage != -1 )
+			m_hPlayer->m_takedamage = m_nOldTakeDamage;
+#endif
 	}
 
 	m_state = USE_OFF;

@@ -425,7 +425,18 @@ void CHL2MP_Player::Spawn(void)
 
 		RemoveEffects( EF_NODRAW );
 		
+#ifdef DEATHMATCH
+		if ( !Q_stristr( STRING( gpGlobals->mapname ), "background" ) )
+		{
+#endif
 		GiveDefaultItems();
+#ifdef DEATHMATCH
+		}
+		else
+		{
+			RemoveSuit();
+		}
+#endif
 	}
 
 	m_nRenderFX = kRenderNormal;

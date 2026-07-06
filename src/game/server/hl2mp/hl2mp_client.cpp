@@ -25,6 +25,9 @@
 #include "engine/IEngineSound.h"
 #include "team.h"
 #include "viewport_panel_names.h"
+#ifdef DEATHMATCH
+#include "ienginevgui.h"
+#endif
 
 #include "tier0/vprof.h"
 
@@ -63,6 +66,10 @@ void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 		ClientPrint( pPlayer, HUD_PRINTTALK, "You are on team %s1\n", pPlayer->GetTeam()->GetName() );
 	}
 
+#ifdef DEATHMATCH
+	if ( !Q_stristr( STRING( gpGlobals->mapname ), "background") )
+	{	
+#endif
 	const ConVar *hostname = cvar->FindVar( "hostname" );
 	const char *title = (hostname) ? hostname->GetString() : "MESSAGE OF THE DAY";
 
@@ -75,6 +82,9 @@ void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 	pPlayer->ShowViewPortPanel( PANEL_INFO, true, data );
 
 	data->deleteThis();
+#ifdef DEATHMATCH
+	}
+#endif
 }
 
 /*
