@@ -9,6 +9,10 @@
 #include "mapentities.h"
 #include "hl2mp_gameinterface.h"
 #include "tier0/icommandline.h"
+#ifdef DEATHMATCH
+#include "filesystem.h"
+#include "tier1/utlbuffer.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -45,5 +49,26 @@ void CServerGameClients::GetPlayerLimits( int& minplayers, int& maxplayers, int 
 
 void CServerGameDLL::LevelInit_ParseAllEntities( const char *pMapEntities )
 {
+#ifdef DEATHMATCH
+	char szMapAddPath [ MAX_PATH ];
+	Q_snprintf( szMapAddPath, sizeof( szMapAddPath ), "maps/%s_mapadd.txt", STRING( gpGlobals->mapname ) );
+
+	if ( filesystem->FileExists( szMapAddPath, "MOD" ) )
+	{
+		CUtlBuffer buf;
+		if ( filesystem->ReadFile( szMapAddPath, "MOD", buf ) )
+		{
+			buf.PutChar( '\0' );
+
+			int newLen = Q_strlen( pMapEntities ) + buf.TellPut() + 1;
+			char *pCombined = new char [ newLen ];
+			Q_strncpy( pCombined, pMapEntities, newLen );
+			Q_strncat( pCombined, ( const char * ) buf.Base(), newLen );
+
+			MapEntity_ParseAllEntities( pCombined );
+			delete[] pCombined;
+		}
+	}
+#endif
 }
 
