@@ -47,6 +47,8 @@ void CPowerup::Precache( void )
 	BaseClass::Precache();
 
 	PrecacheModel( "models/propper/powerup_stand/powerup_stand.mdl" );
+	PrecacheScriptSound( "AlyxEmp.Charge" );
+	PrecacheScriptSound( "ODM.CollectPowerup" );
 }
 
 void CPowerup::Spawn( void )
@@ -129,6 +131,8 @@ void CPowerup::PowerupTouch( CBaseEntity *pOther )
 
 	ApplyPowerupEffect( pPlayer );
 
+	EmitSound( "ODM.CollectPowerup" );
+
 	m_bActive = false;
 	//AddEffects( EF_NODRAW );
 	SetTouch( NULL );
@@ -146,6 +150,10 @@ void CPowerup::RespawnThink( void )
 	m_bActive = true;
 	//RemoveEffects( EF_NODRAW );
 	SetTouch( &CPowerup::PowerupTouch );
+
+#ifdef HL2MP
+	EmitSound( "AlyxEmp.Charge" );
+#endif
 
 	PickRandomPowerupType();
 	CreateGlowSprite();
