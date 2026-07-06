@@ -62,7 +62,7 @@ void CPowerup::Spawn( void )
 
 	AddEffects( EF_NOSHADOW );
 
-	CollisionProp()->UseTriggerBounds( true, 0 );
+	//CollisionProp()->UseTriggerBounds( true, 0 );
 
 	//UTIL_SetSize( this, Vector( -16, -16, -16 ), Vector( 16, 16, 16 ) );
 
