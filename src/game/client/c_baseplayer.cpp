@@ -1449,7 +1449,7 @@ bool C_BasePlayer::InPerspectiveView() const
 	// VIEW_NONE is used by the water intersection view, see CAboveWaterView::CIntersectionView::Draw()
 	// (TODO: Consider changing the view ID at the source to VIEW_REFRACTION? VIEW_NONE could be an oversight)
 	view_id_t viewID = CurrentViewID();
-	return ( viewID == VIEW_MAIN || viewID == VIEW_INTRO_CAMERA || viewID == VIEW_REFRACTION || viewID == VIEW_NONE );
+	return ( viewID == VIEW_MAIN || viewID == VIEW_INTRO_CAMERA || viewID == VIEW_REFRACTION || viewID == VIEW_NONE ) || ( IsLocalPlayerSpectator() && GetSpectatorMode() == OBS_MODE_IN_EYE );
 }
 #endif
 

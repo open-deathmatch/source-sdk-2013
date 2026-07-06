@@ -14,6 +14,11 @@
 static Vector CAM_HULL_MIN(-CAM_HULL_OFFSET,-CAM_HULL_OFFSET,-CAM_HULL_OFFSET);
 static Vector CAM_HULL_MAX( CAM_HULL_OFFSET, CAM_HULL_OFFSET, CAM_HULL_OFFSET);
 
+#ifdef DEATHMATCH
+static ConVar cam_fadestartdist( "cam_fadestartdist", "100", FCVAR_ARCHIVE | FCVAR_CHEAT );
+static ConVar cam_fadeenddist( "cam_fadeenddist", "50", FCVAR_ARCHIVE | FCVAR_CHEAT );
+#endif
+
 #ifdef CLIENT_DLL
 
 #include "input.h"
@@ -204,6 +209,37 @@ void CThirdPersonManager::PositionCamera( CBasePlayer *pPlayer, const QAngle& an
 				}
 			}
 		}
+
+#ifdef DEATHMATCH
+		if ( pPlayer->GetRenderMode() != kRenderTransTexture )
+			pPlayer->SetRenderMode( kRenderTransTexture );
+
+		float fNextPlayerAlpha = ( ( m_vecCameraOffset [ DIST ] - cam_fadeenddist.GetFloat() ) * ( 100 / ( cam_fadestartdist.GetFloat() - cam_fadeenddist.GetFloat() ) ) );
+		// alpha = 0-100
+		//opacity as percentage (unclamped) = (dist-fadeenddist) * (100 / (fadestartdist - fadeenddist))
+		//opacity 0-255 = 2.55 * opacity as percentage
+
+		fNextPlayerAlpha = fNextPlayerAlpha * 2.55; // convert 0-100 into 0-255
+
+		if ( fNextPlayerAlpha > 255 ) // clamp 100%
+			fNextPlayerAlpha = 255;
+
+		if ( fNextPlayerAlpha < 0 )	// clamp 0%
+			fNextPlayerAlpha = 0;
+
+
+
+		pPlayer->SetRenderColorA( fNextPlayerAlpha );
+
+		// dirty hack but its fine enough
+		if ( pPlayer->GetActiveWeapon() )
+		{
+			if ( pPlayer->GetActiveWeapon()->GetRenderMode() != kRenderTransTexture )
+				pPlayer->GetActiveWeapon()->SetRenderMode( kRenderTransTexture );
+
+			pPlayer->GetActiveWeapon()->SetRenderColorA( fNextPlayerAlpha );
+		}
+#endif
 	}
 }
 
