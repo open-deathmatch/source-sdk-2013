@@ -67,6 +67,8 @@ $Project "Server (Open Deathmatch)"
 		{
 			$File	"$SRCDIR\game\shared\deathmatch\handviewmodel_shared.cpp"
 			$File	"$SRCDIR\game\shared\deathmatch\weapon_bugbait.cpp"
+			$File	"deathmatch\powerup.cpp"
+			$File	"deathmatch\powerup.h"
 		}
 
 		$Folder "NextBot"
